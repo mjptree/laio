@@ -7,6 +7,10 @@ set(CMAKE_CXX_STANDARD 17)
 # Subdirectories
 add_subdirectory(dependencies/windows_system_error)
 
+# Use GSL for acces to spans
+# TODO: To be replaced by STL span upon availability
+add_subdirectory(dependencies/GSL)
+
 # TODO: Resolve redundancy in submodules
 # add_subdirectory(dependencies/Catch2)
 
@@ -23,7 +27,7 @@ target_include_directories(laio
             src/utils
             src/private
         )
-target_link_libraries(laio windows_system_error)
+target_link_libraries(laio windows_system_error GSL)
 
 # Build tests
 add_executable(test_laio

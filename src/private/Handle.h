@@ -30,30 +30,30 @@ namespace laio {
     class Handle {
         HANDLE _raw_handle;
     public:
-        explicit Handle(HANDLE handle)
+        explicit Handle(HANDLE handle) noexcept
                 : _raw_handle(handle) {}
 
-        ~Handle();
+        ~Handle() noexcept;
 
-        HANDLE& raw();
+        HANDLE& raw() noexcept;
 
-        HANDLE into_raw() &&;
+        HANDLE into_raw() && noexcept;
 
-        Result<std::size_t> write(const unsigned char buf[]);
+        Result<std::size_t> write(const unsigned char buf[]) noexcept;
 
-        Result<std::size_t> read(unsigned char buf[]);
+        Result<std::size_t> read(unsigned char buf[]) noexcept;
 
-        Result<std::optional<std::size_t>> read_overlapped(unsigned char buf[], OVERLAPPED *overlapped);
+        Result<std::optional<std::size_t>> read_overlapped(unsigned char buf[], OVERLAPPED *overlapped) noexcept;
 
-        Result<std::size_t> read_overlapped_wait(unsigned char buf[], OVERLAPPED *overlapped);
+        Result<std::size_t> read_overlapped_wait(unsigned char buf[], OVERLAPPED *overlapped) noexcept;
 
-        Result<std::optional<std::size_t>> read_overlapped_helper(unsigned char buf[], OVERLAPPED *overlapped, BOOLEAN wait);
+        Result<std::optional<std::size_t>> read_overlapped_helper(unsigned char buf[], OVERLAPPED *overlapped, BOOLEAN wait) noexcept;
 
-        Result<std::optional<std::size_t>> write_overlapped(const unsigned char buf[],  OVERLAPPED *overlapped);
+        Result<std::optional<std::size_t>> write_overlapped(const unsigned char buf[],  OVERLAPPED *overlapped) noexcept;
 
-        Result<std::size_t> write_overlapped_wait(const unsigned char buf[], OVERLAPPED *overlapped);
+        Result<std::size_t> write_overlapped_wait(const unsigned char buf[], OVERLAPPED *overlapped) noexcept;
 
-        Result<std::optional<std::size_t>> write_overlapped_helper(const unsigned char buf[], OVERLAPPED *overlapped, BOOLEAN wait);
+        Result<std::optional<std::size_t>> write_overlapped_helper(const unsigned char buf[], OVERLAPPED *overlapped, BOOLEAN wait) noexcept;
     };
 
 } // namespace laio

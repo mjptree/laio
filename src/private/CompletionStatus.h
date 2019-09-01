@@ -24,12 +24,15 @@ namespace laio {
     class CompletionStatus {
         OVERLAPPED_ENTRY _raw_overlapped_entry;
     public:
-        explicit CompletionStatus(OVERLAPPED_ENTRY overlappedEntry)
+        explicit constexpr CompletionStatus(OVERLAPPED_ENTRY overlappedEntry) noexcept
                 : _raw_overlapped_entry{overlappedEntry} {}
 
-        explicit operator OVERLAPPED_ENTRY();
+        explicit constexpr CompletionStatus(LPOVERLAPPED_ENTRY lpOverlappedEntry) noexcept
+                : _raw_overlapped_entry{*lpOverlappedEntry} {}
 
-        explicit operator LPOVERLAPPED_ENTRY();
+        explicit constexpr operator OVERLAPPED_ENTRY() noexcept;
+
+        explicit constexpr operator LPOVERLAPPED_ENTRY() noexcept;
     };
 
 } // namespace laio

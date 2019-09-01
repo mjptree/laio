@@ -3,11 +3,11 @@
 namespace laio {
 
 
-    CompletionStatus::operator OVERLAPPED_ENTRY() {
+    constexpr CompletionStatus::operator OVERLAPPED_ENTRY() noexcept {
         return _raw_overlapped_entry;
     }
 
-    CompletionStatus::operator LPOVERLAPPED_ENTRY() {
+    constexpr CompletionStatus::operator LPOVERLAPPED_ENTRY() noexcept {
         return &_raw_overlapped_entry;
     }
 } // namespace laio
