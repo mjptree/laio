@@ -1,0 +1,6 @@
+[submodule "dependencies/windows_system_error"]
+	path = dependencies/windows_system_error
+	url = https://github.com/mjptree/windows_system_error
+[submodule "dependencies/Catch2"]
+	path = dependencies/Catch2
+	url = https://github.com/catchorg/Catch2

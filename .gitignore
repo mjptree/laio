@@ -1,0 +1,23 @@
+# Directories
+bin/
+lib/
+build_files/
+doc/
+CMakeFiles/
+CMakeScripts/
+cmake-build-debug/
+build/
+.vs/
+.idea/
+
+# Files
+CMakeCache.txt
+CTestTestfile.cmake
+cmake_install.cmake
+*.vcxproj*
+*.sln
+*.xcodeproj
+*.xctestrun
+Makefile
+*.pyc
+.hgignore
