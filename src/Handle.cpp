@@ -22,22 +22,34 @@ namespace laio {
     Result<std::size_t> Handle::write(const unsigned char *buf) noexcept {
         DWORD bytes = 0;
         const DWORD len = (std::min)(sizeof buf, (std::numeric_limits<std::size_t>::max)());
-        const BOOL res = WriteFile(this->_raw_handle, buf, len, &bytes, nullptr);
+        const BOOL res = WriteFile(
+                this->_raw_handle,
+                buf,
+                len,
+                &bytes,
+                nullptr
+                );
         if (res) {
             return static_cast<std::size_t>(bytes);
         } else {
-            return {wse::win_error{}};
+            return wse::win_error{};
         }
     }
 
     Result<std::size_t> Handle::read(unsigned char *buf) noexcept {
         DWORD bytes = 0;
         const DWORD len = (std::min)(sizeof buf, (std::numeric_limits<std::size_t>::max)());
-        const BOOL res = ReadFile(this->_raw_handle, buf, len, &bytes, nullptr);
+        const BOOL res = ReadFile(
+                this->_raw_handle,
+                buf,
+                len,
+                &bytes,
+                nullptr
+                );
         if (res) {
             return static_cast<std::size_t>(bytes);
         } else {
-            return {wse::win_error{}};
+            return wse::win_error{};
         }
     }
 
@@ -59,7 +71,13 @@ namespace laio {
     Result<std::optional<std::size_t>>
     Handle::read_overlapped_helper(unsigned char *buf, OVERLAPPED *overlapped, BOOLEAN wait) noexcept {
         const DWORD len = (std::min)(sizeof buf, (std::numeric_limits<std::size_t>::max)());
-        BOOL res = ReadFile(this->_raw_handle, buf, len, nullptr, overlapped);
+        BOOL res = ReadFile(
+                this->_raw_handle,
+                buf,
+                len,
+                nullptr,
+                overlapped
+                );
         if (res == 0) {
             const auto err = static_cast<wse::win_errc>(GetLastError());
             if (err != wse::win_errc::io_pending) {
@@ -67,7 +85,12 @@ namespace laio {
             }
         }
         DWORD bytes = 0;
-        res = GetOverlappedResult(this->_raw_handle, overlapped, &bytes, static_cast<BOOL>(wait));
+        res = GetOverlappedResult(
+                this->_raw_handle,
+                overlapped,
+                &bytes,
+                static_cast<BOOL>(wait)
+                );
         if (res == 0) {
             const auto err = static_cast<wse::win_errc>(GetLastError());
             if (err == wse::win_errc::io_incomplete && wait == FALSE) {
@@ -97,7 +120,13 @@ namespace laio {
     Result<std::optional<std::size_t>>
     Handle::write_overlapped_helper(const unsigned char *buf, OVERLAPPED *overlapped, BOOLEAN wait) noexcept {
         const DWORD len = (std::min)(sizeof buf, (std::numeric_limits<std::size_t>::max)());
-        BOOL res = WriteFile(this->_raw_handle, buf, len, nullptr, overlapped);
+        BOOL res = WriteFile(
+                this->_raw_handle,
+                buf,
+                len,
+                nullptr,
+                overlapped
+                );
         if (res == 0) {
             const auto err = static_cast<wse::win_errc>(GetLastError());
             if (err != wse::win_errc::io_pending) {

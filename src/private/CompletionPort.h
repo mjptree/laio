@@ -16,7 +16,7 @@ namespace laio {
     class CompletionPort {
         Handle _handle;
 
-        Result<std::monostate> _add(std::size_t token, HANDLE handle) noexcept;
+        Result<std::monostate> _add(std::size_t token, const HANDLE& handle) noexcept;
     public:
         explicit CompletionPort(const Handle& handle) noexcept
             : _handle(handle) {}
