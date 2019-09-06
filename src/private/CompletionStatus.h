@@ -1,38 +1,36 @@
 #ifndef COMPLETIONSTATUS_H
 #define COMPLETIONSTATUS_H
 
-#ifndef __wtypes_h__
-#include <wtypes.h>
-#endif
-
-#ifndef __WINDEF_
-#include <windef.h>
-#endif
-
-#ifndef _WINUSER_
-#include <winuser.h>
-#endif
-
-#ifndef __RPC_H__
-#include <rpc.h>
-#endif
-
-#include <minwinbase.h>
+#include "Overlapped.h"
 
 namespace laio {
 
     class CompletionStatus {
         OVERLAPPED_ENTRY _raw_overlapped_entry;
     public:
-        explicit constexpr CompletionStatus(OVERLAPPED_ENTRY overlappedEntry) noexcept
+        explicit constexpr CompletionStatus(const OVERLAPPED_ENTRY& overlappedEntry) noexcept
                 : _raw_overlapped_entry{overlappedEntry} {}
 
-        explicit constexpr CompletionStatus(LPOVERLAPPED_ENTRY lpOverlappedEntry) noexcept
+        explicit constexpr CompletionStatus(const LPOVERLAPPED_ENTRY& lpOverlappedEntry) noexcept
                 : _raw_overlapped_entry{*lpOverlappedEntry} {}
 
-        explicit constexpr operator OVERLAPPED_ENTRY() noexcept;
+        constexpr operator OVERLAPPED_ENTRY() const noexcept;
 
-        explicit constexpr operator LPOVERLAPPED_ENTRY() noexcept;
+        constexpr operator LPOVERLAPPED_ENTRY() noexcept;
+
+        static CompletionStatus create(unsigned long bytes, std::size_t token, Overlapped* overlapped) noexcept;
+
+        static CompletionStatus from_entry(const OVERLAPPED_ENTRY& entry) noexcept;
+
+        static CompletionStatus zero() noexcept;
+
+        unsigned long bytes_transferred() noexcept;
+
+        std::size_t token() noexcept;
+
+        OVERLAPPED* overlapped() noexcept;
+
+        OVERLAPPED_ENTRY* entry() noexcept;
     };
 
 } // namespace laio

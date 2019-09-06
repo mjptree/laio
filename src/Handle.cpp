@@ -60,8 +60,7 @@ namespace laio {
     Result<std::size_t> Handle::read_overlapped_wait(unsigned char *buf, OVERLAPPED *overlapped) noexcept {
         const Result<std::optional<std::size_t>> res = this->read_overlapped_helper(buf, overlapped, TRUE);
 
-        // Technically throws if it accesses a `std::nullopt`, but due to `wait == TRUE`, that
-        // would constitute a logic error.
+        // Technically throws if it accesses a `std::nullopt`, but due to `wait == TRUE`, that would constitute a logic error.
         return std::visit(overload {
             [] (const std::optional<std::size_t>& arg) -> Result<std::size_t> { return arg.value(); }, // TODO: Change to non-throwing alternative
             [] (const std::exception& arg) -> Result<std::size_t> { return arg; },
@@ -109,8 +108,7 @@ namespace laio {
     Result<std::size_t> Handle::write_overlapped_wait(const unsigned char *buf, OVERLAPPED *overlapped) noexcept {
         const Result<std::optional<std::size_t>> res = this->write_overlapped_helper(buf, overlapped, TRUE);
 
-        // Technically throws if it accesses a `std::nullopt`, but due to `wait == TRUE`, that
-        // would constitute a logic error.
+        // Technically throws if it accesses a `std::nullopt`, but due to `wait == TRUE`, that would constitute a logic error.
         return std::visit(overload {
             [](const std::optional<std::size_t>& arg) -> Result<std::size_t> { return *arg; },
             [](const std::exception& arg) -> Result<std::size_t> { return arg; },

@@ -20,6 +20,20 @@ namespace laio {
         return CompletionPort{Handle{ret}};
     }
 
+    CompletionPort CompletionPort::from_raw_handle(HANDLE handle) noexcept {
+        return CompletionPort{Handle{handle}};
+    }
+
+    HANDLE CompletionPort::as_raw_handle() noexcept {
+        return this->_handle.raw();
+    }
+
+    HANDLE CompletionPort::into_raw_handle() && noexcept {
+
+        // TODO: Ensure object is properly invalidated.
+        return this->_handle.raw();
+    }
+
     Result<std::monostate> CompletionPort::_add(const std::size_t token, const HANDLE& handle) noexcept {
 
         // For 32-bit systems: int  = long = ptr = 32b
@@ -44,13 +58,13 @@ namespace laio {
     CompletionPort::get(std::optional<const std::chrono::milliseconds> timeout) noexcept {
         DWORD bytes = 0;
         DWORD token = 0;
-        LPOVERLAPPED* overlapped = nullptr;
+        LPOVERLAPPED overlapped = nullptr;
         const DWORD duration = timeout ? static_cast<DWORD>((*timeout).count()) : INFINITE;
         const BOOL ret = GetQueuedCompletionStatus(
                 this->_handle.raw(),
                 &bytes,
                 &token,
-                overlapped,
+                &overlapped,
                 duration
                 );
         if (ret == 0) {
@@ -58,7 +72,7 @@ namespace laio {
         }
         return CompletionStatus{OVERLAPPED_ENTRY {
             token,
-            *overlapped,
+            overlapped,
             0,
             bytes,
         }};
@@ -86,6 +100,20 @@ namespace laio {
 
         // Return a non-owning view into the array, spanning only the successfully dequeued Completion Statuses.
         return list.first(static_cast<std::size_t>(removed));
+    }
+
+    Result<std::monostate> CompletionPort::post(const CompletionStatus status) noexcept {
+        const OVERLAPPED_ENTRY &overlappedEntry = status;
+        const BOOL ret = PostQueuedCompletionStatus(
+                this->_handle.raw(),
+                overlappedEntry.dwNumberOfBytesTransferred,
+                overlappedEntry.lpCompletionKey,
+                overlappedEntry.lpOverlapped
+                );
+        if (ret == 0) {
+            return wse::win_error{};
+        }
+        return std::monostate{};
     }
 
 } // namespace laio

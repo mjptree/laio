@@ -23,6 +23,12 @@ namespace laio {
 
         static Result<CompletionPort> create(unsigned long threads) noexcept;
 
+        static CompletionPort from_raw_handle(HANDLE handle) noexcept;
+
+        HANDLE as_raw_handle() noexcept;
+
+        HANDLE into_raw_handle() && noexcept;
+
         template<typename T>
         Result<std::monostate> add_handle(const std::size_t token, const T& t) noexcept {
             return this->_add(token, t.as_raw_handle());
@@ -36,6 +42,8 @@ namespace laio {
         Result<CompletionStatus> get(std::optional<const std::chrono::milliseconds> timeout) noexcept;
 
         Result<gsl::span<CompletionStatus>> get_many(gsl::span<CompletionStatus> list, std::optional<const std::chrono::milliseconds> timeout) noexcept;
+
+        Result<std::monostate> post(CompletionStatus status) noexcept;
     };
 
 } // namespace laio

@@ -19,6 +19,7 @@ add_library(laio
         src/Handle.cpp
         src/CompletionPort.cpp
         src/CompletionStatus.cpp
+        src/Overlapped.cpp
         )
 target_include_directories(laio
         PUBLIC
@@ -27,7 +28,8 @@ target_include_directories(laio
             src/utils
             src/private
         )
-target_link_libraries(laio windows_system_error GSL)
+add_subdirectory(src/net)
+target_link_libraries(laio windows_system_error GSL net)
 
 # Build tests
 add_executable(test_laio
