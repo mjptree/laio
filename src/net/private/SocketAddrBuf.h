@@ -1,16 +1,16 @@
-//
-// Created by Michael on 06.09.2019.
-//
+#ifndef SOCKETADDRBUF_H
+#define SOCKETADDRBUF_H
 
-#ifndef LAIO_SOCKETADDRBUF_H
-#define LAIO_SOCKETADDRBUF_H
+namespace laio {
 
+    namespace net {
 
+        class SocketAddrBuf {
 
-class SocketAddrBuf {
+        };
 
-};
+    }
 
+}
 
-
-#endif //LAIO_SOCKETADDRBUF_H
+#endif // SOCKETADDRBUF_H
