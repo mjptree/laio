@@ -30,12 +30,12 @@ namespace laio {
 
         HANDLE into_raw_handle() && noexcept;
 
-        template<typename T>
+        template<typename T, typename = std::enable_if_t<trait::as_raw_handle<T>> >
         Result<std::monostate> add_handle(const std::size_t token, const T& t) noexcept {
             return this->_add(token, t.as_raw_handle());
         }
 
-        template<typename T>
+        template<typename T, typename = std::enable_if_t<trait::as_raw_socket<T>> >
         Result<std::monostate> add_socket(const std::size_t token, const T& t) noexcept {
             return this->_add(token, static_cast<HANDLE>(t.as_raw_socket()));
         }
@@ -48,13 +48,13 @@ namespace laio {
     };
 
     template<>
-    constexpr bool as_raw_handle<CompletionPort> = true;
+    constexpr bool trait::as_raw_handle<CompletionPort> = true;
 
     template<>
-    constexpr bool from_raw_handle<CompletionPort> = true;
+    constexpr bool trait::from_raw_handle<CompletionPort> = true;
 
     template<>
-    constexpr bool into_raw_handle<CompletionPort> = true;
+    constexpr bool trait::into_raw_handle<CompletionPort> = true;
 
 } // namespace laio
 
