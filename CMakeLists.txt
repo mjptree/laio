@@ -9,10 +9,13 @@ add_subdirectory(dependencies/windows_system_error)
 
 # Use GSL for acces to spans
 # TODO: To be replaced by STL span upon availability
-add_subdirectory(dependencies/GSL)
+if(NOT TARGET GSL)
+    add_subdirectory(dependencies/GSL)
+endif()
 
-# TODO: Resolve redundancy in submodules
-# add_subdirectory(dependencies/Catch2)
+if(NOT TARGET Catch2)
+    add_subdirectory(dependencies/Catch2)
+endif()
 
 # Build library
 add_library(laio
