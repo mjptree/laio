@@ -34,11 +34,15 @@ namespace laio {
         OVERLAPPED_ENTRY* entry() noexcept;
     };
 
-    template<>
-    constexpr bool trait::send<CompletionStatus> = true;
+    namespace trait {
 
-    template<>
-    constexpr bool trait::sync<CompletionStatus> = true;
+        template<>
+        constexpr bool send<CompletionStatus> = true;
+
+        template<>
+        constexpr bool sync<CompletionStatus> = true;
+
+    } // namespace trait
 
 } // namespace laio
 

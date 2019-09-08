@@ -47,14 +47,18 @@ namespace laio {
         Result<std::monostate> post(CompletionStatus status) noexcept;
     };
 
-    template<>
-    constexpr bool trait::as_raw_handle<CompletionPort> = true;
+    namespace trait {
 
-    template<>
-    constexpr bool trait::from_raw_handle<CompletionPort> = true;
+        template<>
+        constexpr bool as_raw_handle<CompletionPort> = true;
 
-    template<>
-    constexpr bool trait::into_raw_handle<CompletionPort> = true;
+        template<>
+        constexpr bool from_raw_handle<CompletionPort> = true;
+
+        template<>
+        constexpr bool into_raw_handle<CompletionPort> = true;
+
+    } // namespace trait
 
 } // namespace laio
 
