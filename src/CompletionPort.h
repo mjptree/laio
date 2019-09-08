@@ -5,6 +5,7 @@
 
 // TODO: Replace by STL span as soon as available
 #include <gsl/span>
+#include "traits.h"
 #include "Handle.h"
 #include "CompletionStatus.h"
 
@@ -45,6 +46,15 @@ namespace laio {
 
         Result<std::monostate> post(CompletionStatus status) noexcept;
     };
+
+    template<>
+    constexpr bool as_raw_handle<CompletionPort> = true;
+
+    template<>
+    constexpr bool from_raw_handle<CompletionPort> = true;
+
+    template<>
+    constexpr bool into_raw_handle<CompletionPort> = true;
 
 } // namespace laio
 

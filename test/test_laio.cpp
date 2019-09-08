@@ -1,7 +1,7 @@
 #include "catch2/catch.hpp"
 
 #include <iostream>
-#include "CompletionPort.h"
+#include "../src/CompletionPort.h"
 
 TEST_CASE()
 {

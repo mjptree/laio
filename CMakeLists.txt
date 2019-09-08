@@ -26,7 +26,6 @@ target_include_directories(laio
             include
         #PRIVATE
             src/utils
-            src/private
         )
 add_subdirectory(src/net)
 target_link_libraries(laio windows_system_error GSL net)
