@@ -20,18 +20,16 @@ namespace laio {
         return CompletionPort{Handle{ret}};
     }
 
-    CompletionPort CompletionPort::from_raw_handle(HANDLE handle) noexcept {
-        return CompletionPort{Handle{handle}};
+    CompletionPort CompletionPort::from_raw_handle(const HANDLE&& handle) noexcept {
+        return CompletionPort{Handle{std::move(handle)}};
     }
 
-    HANDLE CompletionPort::as_raw_handle() noexcept {
+    HANDLE& CompletionPort::as_raw_handle() & noexcept {
         return this->_handle.raw();
     }
 
-    HANDLE CompletionPort::into_raw_handle() && noexcept {
-
-        // TODO: Ensure object is properly invalidated.
-        return this->_handle.raw();
+    HANDLE&& CompletionPort::into_raw_handle() && noexcept {
+        return std::move(this->_handle).into_raw();
     }
 
     Result<std::monostate> CompletionPort::_add(const std::size_t token, const HANDLE& handle) noexcept {
