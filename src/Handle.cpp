@@ -65,7 +65,7 @@ namespace laio {
 
         // Technically throws if it accesses a `std::nullopt`, but due to `wait == TRUE`, that would constitute a logic error.
         return std::visit(overload {
-            [] (const std::optional<std::size_t>& arg) -> Result<std::size_t> { return arg.value(); }, // TODO: Change to non-throwing alternative
+            [] (const std::optional<std::size_t>& arg) -> Result<std::size_t> { return *arg; },
             [] (const std::exception& arg) -> Result<std::size_t> { return arg; },
             }, res);
     }

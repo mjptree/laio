@@ -86,7 +86,7 @@ namespace laio {
         const DWORD duration = timeout ? static_cast<DWORD>((*timeout).count()) : INFINITE;
         const BOOL ret = GetQueuedCompletionStatusEx(
                 this->_handle.raw(),
-                static_cast<LPOVERLAPPED_ENTRY>(*list.data()),
+                static_cast<LPOVERLAPPED_ENTRY>(*list.data()), // TODO: Remove cast operator to LPOVERLAPPED
                 len,
                 &removed,
                 duration,

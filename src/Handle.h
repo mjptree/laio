@@ -29,6 +29,12 @@ namespace laio {
 
     class Handle {
         HANDLE _raw_handle;
+
+        /// Asynchronously read data from file or I/O device associated with this handle
+        Result<std::optional<std::size_t>> read_overlapped_helper(unsigned char buf[], OVERLAPPED *overlapped, BOOLEAN wait) noexcept;
+
+        /// Asynchronously write data to file or I/O device associated with this handle
+        Result<std::optional<std::size_t>> write_overlapped_helper(const unsigned char buf[], OVERLAPPED *overlapped, BOOLEAN wait) noexcept;
     public:
         explicit Handle(HANDLE handle) noexcept
             : _raw_handle(handle) {}
@@ -36,32 +42,35 @@ namespace laio {
         explicit Handle(HANDLE&& handle) noexcept
             : _raw_handle(std::move(handle)) {}
 
-        /// Close handle before clean-up
+        /// Close windows I/O handle before clean-up
         ~Handle() noexcept;
 
-        /// Borrow raw windows I/O HANDLE object
+        /// Borrow raw windows I/O handle object
         HANDLE& raw() noexcept;
 
-        /// Extract raw windows I/O HANDLE object and consume wrapper
+        /// Extract raw windows I/O handle object and consume wrapper
         HANDLE&& into_raw() && noexcept;
 
+        /// Synchronously write data to file or I/O device associated with this handle
         Result<std::size_t> write(const unsigned char buf[]) noexcept;
 
+        /// Synchronously read data from file or I/O device associated with this handle
         Result<std::size_t> read(unsigned char buf[]) noexcept;
 
+        /// Asynchronously read data from file or I/O device and return immediately
         Result<std::optional<std::size_t>> read_overlapped(unsigned char buf[], OVERLAPPED *overlapped) noexcept;
 
+        /// Asynchronously read data from file or I/O device and wait for completion
         Result<std::size_t> read_overlapped_wait(unsigned char buf[], OVERLAPPED *overlapped) noexcept;
 
-        // TODO: Determine whether helper-function can be moved to private
-        Result<std::optional<std::size_t>> read_overlapped_helper(unsigned char buf[], OVERLAPPED *overlapped, BOOLEAN wait) noexcept;
-
+        /// Asynchronously write data to file or I/O device and return immediately
         Result<std::optional<std::size_t>> write_overlapped(const unsigned char buf[],  OVERLAPPED *overlapped) noexcept;
 
+        /// Asynchronously write data to file or I/O device and wait for completion
         Result<std::size_t> write_overlapped_wait(const unsigned char buf[], OVERLAPPED *overlapped) noexcept;
 
-        // TODO: Determine whether helper-function can be moved to private
-        Result<std::optional<std::size_t>> write_overlapped_helper(const unsigned char buf[], OVERLAPPED *overlapped, BOOLEAN wait) noexcept;
+        // TODO: - Implement assignment and move assignment operator overloads
+        //       - Revisit available constructors, consider deleting copy constructor
     };
 
 } // namespace laio
