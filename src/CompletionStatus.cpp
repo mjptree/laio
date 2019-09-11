@@ -9,7 +9,7 @@ namespace laio {
 
     CompletionStatus CompletionStatus::create(const unsigned long bytes, const std::size_t token, Overlapped* overlapped) noexcept {
         static_assert(sizeof token == sizeof(ULONG_PTR));
-        return CompletionStatus{OVERLAPPED_ENTRY {
+        return CompletionStatus{ OVERLAPPED_ENTRY {
                 static_cast<ULONG_PTR>(token),
                 static_cast<LPOVERLAPPED>(*overlapped),
                 0,
@@ -18,7 +18,7 @@ namespace laio {
     }
 
     CompletionStatus CompletionStatus::from_entry(const OVERLAPPED_ENTRY& entry) noexcept {
-        return CompletionStatus{entry};
+        return CompletionStatus{std::move(entry)}; // NOLINT(hicpp-move-const-arg,performance-move-const-arg)
     }
 
     CompletionStatus CompletionStatus::zero() noexcept {
@@ -26,7 +26,7 @@ namespace laio {
     }
 
     unsigned long CompletionStatus::bytes_transferred() noexcept {
-        return this->_raw_overlapped_entry.dwNumberOfBytesTransferred;
+        return static_cast<unsigned long>(this->_raw_overlapped_entry.dwNumberOfBytesTransferred);
     }
 
     std::size_t CompletionStatus::token() noexcept {
