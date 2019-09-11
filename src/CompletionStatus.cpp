@@ -7,10 +7,6 @@ namespace laio {
         return _raw_overlapped_entry;
     }
 
-    constexpr CompletionStatus::operator LPOVERLAPPED_ENTRY() noexcept {
-        return &_raw_overlapped_entry;
-    }
-
     CompletionStatus CompletionStatus::create(const unsigned long bytes, const std::size_t token, Overlapped* overlapped) noexcept {
         static_assert(sizeof token == sizeof(ULONG_PTR));
         return CompletionStatus{OVERLAPPED_ENTRY {

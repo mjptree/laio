@@ -9,15 +9,13 @@ namespace laio {
     class CompletionStatus {
         OVERLAPPED_ENTRY _raw_overlapped_entry;
     public:
-        explicit constexpr CompletionStatus(const OVERLAPPED_ENTRY& overlappedEntry) noexcept
-                : _raw_overlapped_entry{overlappedEntry} {}
+        explicit CompletionStatus(const OVERLAPPED_ENTRY& overlappedEntry) noexcept
+            : _raw_overlapped_entry{overlappedEntry} {}
 
-        explicit constexpr CompletionStatus(const LPOVERLAPPED_ENTRY& lpOverlappedEntry) noexcept
-                : _raw_overlapped_entry{*lpOverlappedEntry} {}
+        explicit CompletionStatus(OVERLAPPED_ENTRY&& overlappedEntry) noexcept
+            : _raw_overlapped_entry{std::move(overlappedEntry)} {} // NOLINT(hicpp-move-const-arg,performance-move-const-arg)
 
-        constexpr operator OVERLAPPED_ENTRY() const noexcept;
-
-        constexpr operator LPOVERLAPPED_ENTRY() noexcept;
+        constexpr operator OVERLAPPED_ENTRY() const noexcept; // NOLINT(google-explicit-constructor,hicpp-explicit-conversions)
 
         static CompletionStatus create(unsigned long bytes, std::size_t token, Overlapped* overlapped) noexcept;
 
