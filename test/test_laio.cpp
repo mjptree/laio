@@ -2,19 +2,25 @@
 
 #include <iostream>
 #include "../src/CompletionPort.h"
+#include "../src/Handle.h"
+#include "win_error.h"
 
 TEST_CASE() {
-    std::cout << "Size of std::size_t: " << sizeof(std::size_t) << '\n'
-        << "Size of ULONG_PTR: " << sizeof(ULONG_PTR) << '\n'
-        << "Size of DWORD: " << sizeof(DWORD) << '\n'
-        << "Size of short: " << sizeof(unsigned short) << '\n'
-        << "Size of short int: " << sizeof(unsigned short int) << '\n'
-        << "Size of int: " << sizeof(unsigned int) << '\n'
-        << "Size of long int: " << sizeof(unsigned long int) << '\n'
-        << "Size of long: " << sizeof(unsigned long) << '\n'
-        << "Size of long long: " << sizeof(unsigned long long) << std::endl;
-    CHECK(sizeof(std::size_t) == sizeof(ULONG_PTR));
-    CHECK(sizeof(unsigned int) == sizeof(unsigned long));
+    HANDLE _in_handle = GetStdHandle(STD_INPUT_HANDLE);
+    HANDLE _out_handle = GetStdHandle(STD_OUTPUT_HANDLE);
+    laio::Handle handleIn{_in_handle};
+    laio::Handle handleOut{_out_handle};
+    std::cout << _in_handle << '\n'
+        << handleIn.raw() << '\n';
+    std::cout << _out_handle << '\n'
+              << handleOut.raw() << '\n';
+
+    HANDLE _move_out{std::move(handleIn).into_raw()};
+    std::cout << handleIn.raw() << std::endl;
+    std::cout << _move_out << std::endl;
+    if (wse::win_error err{}; !(err == wse::win_errc::success_exception)) {
+        std::cout << err.what() << std::endl;
+    }
 }
 
 #include "traits.h"

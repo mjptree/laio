@@ -38,4 +38,4 @@ add_executable(test_laio
         test/testmain.cpp
         test/test_laio.cpp
         )
-target_link_libraries(test_laio Catch2 laio)
+target_link_libraries(test_laio windows_system_error Catch2 laio)

@@ -7,16 +7,19 @@
 namespace laio {
 
     Handle::~Handle() noexcept {
-        CloseHandle(_raw_handle);
+
+        // TODO: Determine, whether `CloseHandle` is not in fact taking care of invalid handle values itself
+        if (_raw_handle != nullptr) CloseHandle(_raw_handle);
     }
 
     HANDLE& Handle::raw() noexcept {
         return _raw_handle;
     }
 
-    // TODO: Ensure that destructor is not called after moving out of laio::Handle
-    HANDLE Handle::into_raw() && noexcept {
-        return _raw_handle;
+    HANDLE&& Handle::into_raw() && noexcept {
+        HANDLE temp = std::move(_raw_handle);
+        _raw_handle = nullptr;
+        return std::move(temp);
     }
 
     Result<std::size_t> Handle::write(const unsigned char *buf) noexcept {
@@ -92,6 +95,8 @@ namespace laio {
                 );
         if (res == 0) {
             const auto err = static_cast<wse::win_errc>(GetLastError());
+
+            // If you mess with this condition, you magically convert a logic error into a runtime error
             if (err == wse::win_errc::io_incomplete && wait == FALSE) {
                 return std::nullopt;
             } else {
