@@ -17,9 +17,9 @@ namespace laio {
     }
 
     HANDLE&& Handle::into_raw() && noexcept {
-        HANDLE temp = std::move(_raw_handle);
+        HANDLE temp = std::move(_raw_handle); // NOLINT(hicpp-move-const-arg,performance-move-const-arg)
         _raw_handle = nullptr;
-        return std::move(temp);
+        return std::move(temp); // NOLINT(hicpp-move-const-arg,performance-move-const-arg)
     }
 
     Result<std::size_t> Handle::write(const unsigned char *buf) noexcept {

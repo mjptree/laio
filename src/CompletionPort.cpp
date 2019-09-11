@@ -21,7 +21,7 @@ namespace laio {
     }
 
     CompletionPort CompletionPort::from_raw_handle(const HANDLE&& handle) noexcept {
-        return CompletionPort{Handle{std::move(handle)}};
+        return CompletionPort{Handle{std::move(handle)}}; // NOLINT(hicpp-move-const-arg,performance-move-const-arg)
     }
 
     HANDLE& CompletionPort::as_raw_handle() & noexcept {
@@ -86,7 +86,7 @@ namespace laio {
         const DWORD duration = timeout ? static_cast<DWORD>((*timeout).count()) : INFINITE;
         const BOOL ret = GetQueuedCompletionStatusEx(
                 this->_handle.raw(),
-                static_cast<LPOVERLAPPED_ENTRY>(*list.data()), // TODO: Remove cast operator to LPOVERLAPPED
+                reinterpret_cast<LPOVERLAPPED_ENTRY>(list.data()),
                 len,
                 &removed,
                 duration,

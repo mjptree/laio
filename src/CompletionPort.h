@@ -21,7 +21,7 @@ namespace laio {
         Result<std::monostate> _add(std::size_t token, const HANDLE& handle) noexcept;
     public:
         explicit CompletionPort(const Handle&& handle) noexcept
-            : _handle{std::move(handle)} {}
+            : _handle{std::move(handle)} {} // NOLINT(hicpp-move-const-arg,performance-move-const-arg)
 
         /// Create new windows I/O completion port with associated number of concurrent threads
         static Result<CompletionPort> create(unsigned long threads) noexcept;

@@ -40,7 +40,7 @@ namespace laio {
             : _raw_handle(handle) {}
 
         explicit Handle(HANDLE&& handle) noexcept
-            : _raw_handle(std::move(handle)) {}
+            : _raw_handle(std::move(handle)) {} // NOLINT(hicpp-move-const-arg,performance-move-const-arg)
 
         /// Close windows I/O handle before clean-up
         ~Handle() noexcept;
