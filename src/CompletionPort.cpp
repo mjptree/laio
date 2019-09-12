@@ -25,11 +25,11 @@ namespace laio {
     }
 
     HANDLE& CompletionPort::as_raw_handle() & noexcept {
-        return this->_handle.raw();
+        return _handle.raw();
     }
 
     HANDLE&& CompletionPort::into_raw_handle() && noexcept {
-        return std::move(this->_handle).into_raw();
+        return std::move(_handle).into_raw();
     }
 
     Result<std::monostate> CompletionPort::_add(const std::size_t token, const HANDLE& handle) noexcept {
@@ -40,7 +40,7 @@ namespace laio {
         static_assert(sizeof token == sizeof(ULONG_PTR));
         HANDLE ret = CreateIoCompletionPort(
                 handle,
-                this->_handle.raw(),
+                _handle.raw(),
                 static_cast<ULONG_PTR>(token),
                 0
                 );
@@ -59,7 +59,7 @@ namespace laio {
         LPOVERLAPPED overlapped = nullptr;
         const DWORD duration = timeout ? static_cast<DWORD>((*timeout).count()) : INFINITE;
         const BOOL ret = GetQueuedCompletionStatus(
-                this->_handle.raw(),
+                _handle.raw(),
                 &bytes,
                 &token,
                 &overlapped,
@@ -85,7 +85,7 @@ namespace laio {
         ULONG removed = 0;
         const DWORD duration = timeout ? static_cast<DWORD>((*timeout).count()) : INFINITE;
         const BOOL ret = GetQueuedCompletionStatusEx(
-                this->_handle.raw(),
+                _handle.raw(),
                 reinterpret_cast<LPOVERLAPPED_ENTRY>(list.data()),
                 len,
                 &removed,
@@ -103,7 +103,7 @@ namespace laio {
     Result<std::monostate> CompletionPort::post(const CompletionStatus status) noexcept {
         const OVERLAPPED_ENTRY &overlappedEntry = status;
         const BOOL ret = PostQueuedCompletionStatus(
-                this->_handle.raw(),
+                _handle.raw(),
                 overlappedEntry.dwNumberOfBytesTransferred,
                 overlappedEntry.lpCompletionKey,
                 overlappedEntry.lpOverlapped

@@ -11,7 +11,7 @@ namespace laio {
         static_assert(sizeof token == sizeof(ULONG_PTR));
         return CompletionStatus{ OVERLAPPED_ENTRY {
                 static_cast<ULONG_PTR>(token),
-                static_cast<LPOVERLAPPED>(*overlapped),
+                overlapped->raw(),
                 0,
                 static_cast<DWORD>(bytes),
         }};
@@ -26,19 +26,19 @@ namespace laio {
     }
 
     unsigned long CompletionStatus::bytes_transferred() noexcept {
-        return static_cast<unsigned long>(this->_raw_overlapped_entry.dwNumberOfBytesTransferred);
+        return static_cast<unsigned long>(_raw_overlapped_entry.dwNumberOfBytesTransferred);
     }
 
     std::size_t CompletionStatus::token() noexcept {
-        return static_cast<std::size_t>(this->_raw_overlapped_entry.lpCompletionKey);
+        return static_cast<std::size_t>(_raw_overlapped_entry.lpCompletionKey);
     }
 
     OVERLAPPED* CompletionStatus::overlapped() noexcept {
-        return this->_raw_overlapped_entry.lpOverlapped;
+        return _raw_overlapped_entry.lpOverlapped;
     }
 
     OVERLAPPED_ENTRY* CompletionStatus::entry() noexcept {
-        return &this->_raw_overlapped_entry;
+        return &_raw_overlapped_entry;
     }
 
 } // namespace laio
