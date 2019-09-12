@@ -12,7 +12,7 @@ namespace laio {
         if (_raw_handle != nullptr) CloseHandle(_raw_handle);
     }
 
-    HANDLE& Handle::raw() noexcept {
+    HANDLE& Handle::raw() & noexcept {
         return _raw_handle;
     }
 
@@ -26,7 +26,7 @@ namespace laio {
         DWORD bytes = 0;
         const DWORD len = (std::min)(sizeof buf, (std::numeric_limits<std::size_t>::max)());
         const BOOL res = WriteFile(
-                this->_raw_handle,
+                _raw_handle,
                 buf,
                 len,
                 &bytes,
@@ -43,7 +43,7 @@ namespace laio {
         DWORD bytes = 0;
         const DWORD len = (std::min)(sizeof buf, (std::numeric_limits<std::size_t>::max)());
         const BOOL res = ReadFile(
-                this->_raw_handle,
+                _raw_handle,
                 buf,
                 len,
                 &bytes,
@@ -57,13 +57,13 @@ namespace laio {
     }
 
     Result<std::optional<std::size_t>> Handle::read_overlapped(unsigned char *buf, OVERLAPPED *overlapped) noexcept {
-        return this->read_overlapped_helper(buf, overlapped, FALSE);
+        return read_overlapped_helper(buf, overlapped, FALSE);
     }
 
     Result<std::size_t> Handle::read_overlapped_wait(unsigned char *buf, OVERLAPPED *overlapped) noexcept {
-        const Result<std::optional<std::size_t>> res = this->read_overlapped_helper(buf, overlapped, TRUE);
+        const Result<std::optional<std::size_t>> res = read_overlapped_helper(buf, overlapped, TRUE);
 
-        // Technically throws if it accesses a `std::nullopt`, but due to `wait == TRUE`, that would constitute a logic error.
+        // Does not throw if it accesses a `std::nullopt`, but due to `wait == TRUE`, that would constitute a logic error.
         return std::visit(overload {
             [] (const std::optional<std::size_t>& arg) -> Result<std::size_t> { return *arg; },
             [] (const std::exception& arg) -> Result<std::size_t> { return arg; },
@@ -74,7 +74,7 @@ namespace laio {
     Handle::read_overlapped_helper(unsigned char *buf, OVERLAPPED *overlapped, BOOLEAN wait) noexcept {
         const DWORD len = (std::min)(sizeof buf, (std::numeric_limits<std::size_t>::max)());
         BOOL res = ReadFile(
-                this->_raw_handle,
+                _raw_handle,
                 buf,
                 len,
                 nullptr,
@@ -88,7 +88,7 @@ namespace laio {
         }
         DWORD bytes = 0;
         res = GetOverlappedResult(
-                this->_raw_handle,
+                _raw_handle,
                 overlapped,
                 &bytes,
                 static_cast<BOOL>(wait)
@@ -107,13 +107,13 @@ namespace laio {
     }
 
     Result<std::optional<std::size_t>> Handle::write_overlapped(const unsigned char *buf, OVERLAPPED *overlapped) noexcept {
-        return this->write_overlapped_helper(buf, overlapped, FALSE);
+        return write_overlapped_helper(buf, overlapped, FALSE);
     }
 
     Result<std::size_t> Handle::write_overlapped_wait(const unsigned char *buf, OVERLAPPED *overlapped) noexcept {
-        const Result<std::optional<std::size_t>> res = this->write_overlapped_helper(buf, overlapped, TRUE);
+        const Result<std::optional<std::size_t>> res = write_overlapped_helper(buf, overlapped, TRUE);
 
-        // Technically throws if it accesses a `std::nullopt`, but due to `wait == TRUE`, that would constitute a logic error.
+        // Does not throw if it accesses a `std::nullopt`, but due to `wait == TRUE`, that would constitute a logic error.
         return std::visit(overload {
             [](const std::optional<std::size_t>& arg) -> Result<std::size_t> { return *arg; },
             [](const std::exception& arg) -> Result<std::size_t> { return arg; },
@@ -124,7 +124,7 @@ namespace laio {
     Handle::write_overlapped_helper(const unsigned char *buf, OVERLAPPED *overlapped, BOOLEAN wait) noexcept {
         const DWORD len = (std::min)(sizeof buf, (std::numeric_limits<std::size_t>::max)());
         BOOL res = WriteFile(
-                this->_raw_handle,
+                _raw_handle,
                 buf,
                 len,
                 nullptr,
@@ -137,7 +137,7 @@ namespace laio {
             }
         }
         DWORD bytes = 0;
-        res = GetOverlappedResult(this->_raw_handle, overlapped, &bytes, static_cast<BOOL>(wait));
+        res = GetOverlappedResult(_raw_handle, overlapped, &bytes, static_cast<BOOL>(wait));
         if (res == 0) {
             const auto err = static_cast<wse::win_errc>(GetLastError());
             if (err == wse::win_errc::io_incomplete && wait == FALSE) {

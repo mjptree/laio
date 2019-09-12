@@ -46,7 +46,7 @@ namespace laio {
         ~Handle() noexcept;
 
         /// Borrow raw windows I/O handle object
-        HANDLE& raw() noexcept;
+        HANDLE& raw() & noexcept;
 
         /// Extract raw windows I/O handle object and consume wrapper
         HANDLE&& into_raw() && noexcept;
