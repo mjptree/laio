@@ -1,16 +1,20 @@
-//
-// Created by Michael on 12.09.2019.
-//
+#ifndef ACCEPTADDR_H
+#define ACCEPTADDR_H
 
-#ifndef LAIO_ACCEPTADDR_H
-#define LAIO_ACCEPTADDR_H
+#include "AcceptAddrBuf.h"
 
+namespace laio::net {
 
+    class AcceptAddr {
 
-class AcceptAddr {
+        SOCKADDR* _local_socket_address;
+        int _local_length;
+        SOCKADDR* _remote_socket_address;
+        int _remote_length;
+        AcceptAddrBuf* _data;
 
-};
+    };
 
+} // namespace laio::net
 
-
-#endif //LAIO_ACCEPTADDR_H
+#endif // ACCEPTADDR_H

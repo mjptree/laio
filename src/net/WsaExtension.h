@@ -1,16 +1,18 @@
-//
-// Created by Michael on 12.09.2019.
-//
+#ifndef WSAEXTENSION_H
+#define WSAEXTENSION_H
 
-#ifndef LAIO_WSAEXTENSION_H
-#define LAIO_WSAEXTENSION_H
+#include <atomic>
+#include <guiddef.h>
 
+namespace laio::net {
 
+    class WsaExtension {
 
-class WsaExtension {
+        GUID _guid;
+        std::atomic<std::size_t> _value;
 
-};
+    };
 
+} // namespace laio::net
 
-
-#endif //LAIO_WSAEXTENSION_H
+#endif // WSAEXTENSION_H

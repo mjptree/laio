@@ -1,11 +1,7 @@
 #include "SocketAddrBuf.h"
 
-namespace laio {
-
-    namespace net {
+namespace laio::net {
 
 
 
-    }
-
-}
+} // namespace laio::net

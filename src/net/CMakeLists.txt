@@ -2,12 +2,15 @@ cmake_minimum_required(VERSION 3.1)
 
 add_library(net
         SocketAddrBuf.cpp
-        #AcceptAddrBuf.cpp
-        #AcceptAddr.cpp
-        #WsaExtension.cpp
+        AcceptAddrBuf.cpp
+        AcceptAddr.cpp
+        WsaExtension.cpp
+        SocketAddr.cpp
+        TcpListener.cpp
+        TcpStream.cpp
         )
 target_include_directories(net
         PUBLIC
-            private
+            interfaces
             ../utils
         )
