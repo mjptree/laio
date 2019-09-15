@@ -8,9 +8,11 @@ add_library(net
         SocketAddr.cpp
         TcpListener.cpp
         TcpStream.cpp
+        UdpSocket.cpp
         )
 target_include_directories(net
         PUBLIC
-            interfaces
+            ./
             ../utils
+            interfaces
         )

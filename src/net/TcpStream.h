@@ -2,6 +2,7 @@
 #define TCPSTREAM_H
 
 #include <variant>
+#include "TcpStreamExt.h"
 
 namespace laio {
 
@@ -10,7 +11,7 @@ namespace laio {
 
     namespace net {
 
-        class TcpStream {
+        class TcpStream : public interface::TcpStreamExt {
 
         };
 

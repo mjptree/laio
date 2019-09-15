@@ -2,6 +2,7 @@
 #define TCPLISTENER_H
 
 #include <variant>
+#include "TcpListenerExt.h"
 
 namespace laio {
 
@@ -10,7 +11,7 @@ namespace laio {
 
     namespace net {
 
-        class TcpListener {
+    class TcpListener : public interface::TcpListenerExt {
 
         };
 

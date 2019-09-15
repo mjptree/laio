@@ -2,6 +2,7 @@
 #define ACCEPTADDRBUF_H
 
 #include <WinSock2.h>
+
 #include <variant>
 #include "AcceptAddr.h"
 
@@ -19,15 +20,15 @@ namespace laio {
                 unsigned char _padding_1[16];
                 SOCKADDR_STORAGE _remote_socket_address_buffer;
                 unsigned char _padding_2[16];
-            } _inner;
+            } _inner{};
 
         public:
 
             AcceptAddrBuf() : _inner{} {}
 
-            static AcceptAddrBuf create() noexcept;
+            //static AcceptAddrBuf create() noexcept;
 
-            Result<AcceptAddr> parse()
+            //Result<AcceptAddr> parse() noexcept;
         };
 
     } // namespace net

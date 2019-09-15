@@ -1,7 +1,10 @@
 #ifndef UDPSOCKET_H
 #define UDPSOCKET_H
 
+#include <WinSock2.h>
+
 #include <variant>
+#include "UdpSocketExt.h"
 
 namespace laio {
 
@@ -10,7 +13,7 @@ namespace laio {
 
     namespace net {
 
-        class UdpSocket {
+        class UdpSocket : public interface::UdpSocketExt {
 
         };
 

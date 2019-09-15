@@ -1,7 +1,3 @@
-//
-// Created by Michael on 13.09.2019.
-//
-
 #ifndef SOCKETADDR_H
 #define SOCKETADDR_H
 
