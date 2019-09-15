@@ -1,15 +1,25 @@
 #ifndef  TCPLISTENEREXT_H
 #define  TCPLISTENEREXT_H
 
+#include <WinSock2.h>
+
 #include <variant>
 #include <tuple>
+#include <Windows.h>
+#include "TcpStream.h"
+#include "AcceptAddrBuf.h"
+
+// Symbol defined as __STRUCT__ in <combaseapi.h>
+#ifdef interface
+    #undef interface
+#endif
 
 namespace laio {
 
     template<typename T>
     using Result = std::variant<T, std::exception>;
 
-    namespace interface {
+    namespace net::interface {
 
         struct TcpListenerExt {
 
@@ -20,7 +30,7 @@ namespace laio {
 
         };
 
-    } // namespace interface
+    } // namespace net::interface
 
 } // namespace laio
 

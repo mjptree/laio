@@ -4,13 +4,20 @@
 #include <variant>
 #include <optional>
 #include <tuple>
+#include <Windows.h>
+#include "SocketAddr.h"
+
+// Symbol defined as __STRUCT__ in <combaseapi.h>
+#ifdef interface
+    #undef interface
+#endif
 
 namespace laio {
 
     template<typename T>
     using Result = std::variant<T, std::exception>;
 
-    namespace interface {
+    namespace net::interface {
 
         struct TcpStreamExt {
 
@@ -23,7 +30,7 @@ namespace laio {
 
         };
 
-    } // namespace interface
+    } // namespace net::interface
 
 } // namespace laio
 
