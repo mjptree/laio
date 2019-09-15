@@ -2,11 +2,11 @@
 #define OVERLOAD_H
 
 template<class... Ts>
-struct overload : Ts... {
+struct Overload : Ts... {
     using Ts::operator()...;
 };
 
 template<class... Ts>
-overload(Ts...) -> overload<Ts...>;
+Overload(Ts...) -> Overload<Ts...>;
 
 #endif // OVERLOAD_H
