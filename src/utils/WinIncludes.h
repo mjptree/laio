@@ -1,8 +1,15 @@
-//
-// Created by Michael on 15.09.2019.
-//
+#ifndef __wtypes_h__
+    #include <wtypes.h>
+#endif
 
-#ifndef LAIO_WININCLUDES_H
-#define LAIO_WININCLUDES_H
+#ifndef __WINDEF_
+    #include <windef.h>
+#endif
 
-#endif //LAIO_WININCLUDES_H
+#ifndef _WINUSER_
+    #include <winuser.h>
+#endif
+
+#ifndef __RPC_H__
+    #include <rpc.h>
+#endif

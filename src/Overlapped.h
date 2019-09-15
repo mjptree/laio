@@ -1,21 +1,7 @@
 #ifndef OVERLAPPED_H
 #define OVERLAPPED_H
 
-#ifndef __wtypes_h__
-#include <wtypes.h>
-#endif
-
-#ifndef __WINDEF_
-#include <windef.h>
-#endif
-
-#ifndef _WINUSER_
-#include <winuser.h>
-#endif
-
-#ifndef __RPC_H__
-#include <rpc.h>
-#endif
+#include "WinIncludes.h"
 
 #include <minwinbase.h>
 #include <variant>

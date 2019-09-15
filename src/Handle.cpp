@@ -1,7 +1,7 @@
 #include <algorithm>
 #include <limits>
 #include "win_error.h"
-#include "overload.h"
+#include "Overload.h"
 #include "Handle.h"
 
 namespace laio {
@@ -64,7 +64,7 @@ namespace laio {
         const Result<std::optional<std::size_t>> res = read_overlapped_helper(buf, overlapped, TRUE);
 
         // Does not throw if it accesses a `std::nullopt`, but due to `wait == TRUE`, that would constitute a logic error.
-        return std::visit(overload {
+        return std::visit(Overload {
             [] (const std::optional<std::size_t>& arg) -> Result<std::size_t> { return *arg; },
             [] (const std::exception& arg) -> Result<std::size_t> { return arg; },
             }, res);
@@ -114,7 +114,7 @@ namespace laio {
         const Result<std::optional<std::size_t>> res = write_overlapped_helper(buf, overlapped, TRUE);
 
         // Does not throw if it accesses a `std::nullopt`, but due to `wait == TRUE`, that would constitute a logic error.
-        return std::visit(overload {
+        return std::visit(Overload {
             [](const std::optional<std::size_t>& arg) -> Result<std::size_t> { return *arg; },
             [](const std::exception& arg) -> Result<std::size_t> { return arg; },
         }, res);
