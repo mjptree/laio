@@ -5,7 +5,9 @@ project(laio)
 set(CMAKE_CXX_STANDARD 17)
 
 # Subdirectories
-add_subdirectory(dependencies/windows_system_error)
+if(NOT TARGET windows_system_error)
+    add_subdirectory(dependencies/windows_system_error)
+endif()
 
 # Use GSL for acces to spans
 # TODO: To be replaced by STL span upon availability

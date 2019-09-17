@@ -9,7 +9,7 @@ namespace laio::net {
     class WsaExtension {
 
         GUID _guid;
-        std::atomic<std::size_t> _value;
+        std::atomic_size_t _value;
 
     };
 

@@ -10,8 +10,6 @@ TEST_CASE() {
 
 }
 
-
-
 TEST_CASE() {
     laio::net::AcceptAddrBuf buf{};
     CHECK(sizeof buf == sizeof(laio::net::AcceptAddrBuf));
