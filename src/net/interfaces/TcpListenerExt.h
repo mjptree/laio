@@ -26,7 +26,7 @@ namespace laio {
             virtual Result<bool> accept_overlapped(const TcpStream& socket, AcceptAddrBuf& address, OVERLAPPED* overlapped) noexcept = 0;
             virtual Result<std::monostate> accept_complete(const TcpStream& socket) noexcept = 0;
             virtual Result<std::tuple<std::size_t, unsigned long>> result(OVERLAPPED* overlapped) noexcept = 0;
-            // TODO: Set destructor to default (mark as virtual?)
+            virtual ~TcpListenerExt() = default;
 
         };
 

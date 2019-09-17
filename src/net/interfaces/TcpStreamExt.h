@@ -26,7 +26,7 @@ namespace laio {
             virtual Result<std::optional<std::size_t>> connect_overlapped(const SocketAddr& address, const unsigned char buf[], OVERLAPPED* overlapped) noexcept = 0;
             virtual Result<std::monostate> connect_complete() noexcept = 0;
             virtual Result<std::tuple<std::size_t, unsigned long>> recv_overlapped(unsigned char buf[], OVERLAPPED* overlapped) noexcept = 0;
-            // TODO: Set destructor to default (mark as virtual?)
+            virtual ~TcpStreamExt() = default;
 
         };
 

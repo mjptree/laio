@@ -27,7 +27,7 @@ namespace laio {
             virtual Result<std::optional<std::size_t>> send_to_overlapped(const unsigned char buf[], SocketAddr& address, OVERLAPPED* overlapped) noexcept = 0;
             virtual Result<std::optional<std::size_t>> send_overlapped(const unsigned char buf[], OVERLAPPED* overlapped) noexcept = 0;
             virtual Result<std::tuple<std::size_t, unsigned long>> result(OVERLAPPED* overlapped) noexcept = 0;
-            // TODO: Set destructor to default (mark as virtual?)
+            virtual ~UdpSocketExt() = default;
 
         };
 

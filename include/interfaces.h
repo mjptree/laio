@@ -11,6 +11,6 @@ namespace laio::interface {
     using TcpStreamExt = laio::net::interface::TcpStreamExt;
     using UdpSocketExt = laio::net::interface::UdpSocketExt;
 
-}
+} // namespace laio::interface
 
 #endif // INTERFACES_H

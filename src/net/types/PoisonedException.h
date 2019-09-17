@@ -1,0 +1,8 @@
+//
+// Created by Michael on 16.09.2019.
+//
+
+#ifndef LAIO_POISONEDEXCEPTION_H
+#define LAIO_POISONEDEXCEPTION_H
+
+#endif //LAIO_POISONEDEXCEPTION_H
