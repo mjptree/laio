@@ -24,6 +24,9 @@ namespace laio {
 
             static inline IoSpanMut create(unsigned char buf[]) noexcept {
                 static_assert(sizeof(*buf) <= (std::numeric_limits<ULONG>::max)());
+
+                // Seriously? Casting an unsigned char to a signed char?
+                // Well behaved for all 128 ASCII characters - Blows up for any value lesser than 0 or greater than 127
                 return IoSpanMut{std::move(WSABUF{  // NOLINT(hicpp-move-const-arg,performance-move-const-arg)
                     sizeof(*buf),
                     reinterpret_cast<CHAR*>(buf),
@@ -40,11 +43,17 @@ namespace laio {
             }
 
             inline gsl::span<const unsigned char> as_span() noexcept {
-                return gsl::span<const unsigned char>{reinterpret_cast<unsigned char*>(_raw_wsa_buffer.buf), static_cast<int>(_raw_wsa_buffer.len)};
+                return gsl::span<const unsigned char>{
+                    reinterpret_cast<unsigned char*>(_raw_wsa_buffer.buf),
+                    static_cast<int>(_raw_wsa_buffer.len)
+                };
             }
 
             inline gsl::span<unsigned char> as_mut_span() noexcept {
-                return gsl::span<unsigned char>{reinterpret_cast<unsigned char*>(_raw_wsa_buffer.buf), static_cast<int>(_raw_wsa_buffer.len)};
+                return gsl::span<unsigned char>{
+                    reinterpret_cast<unsigned char*>(_raw_wsa_buffer.buf),
+                    static_cast<int>(_raw_wsa_buffer.len)
+                };
             }
         };
 

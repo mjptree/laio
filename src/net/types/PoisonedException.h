@@ -1,8 +1,12 @@
-//
-// Created by Michael on 16.09.2019.
-//
+#ifndef POISONEDEXCEPTION_H
+#define POISONEDEXCEPTION_H
 
-#ifndef LAIO_POISONEDEXCEPTION_H
-#define LAIO_POISONEDEXCEPTION_H
+#include <stdexcept>
 
-#endif //LAIO_POISONEDEXCEPTION_H
+namespace laio::net {
+
+    class PoisonedException : public std::runtime_error {};
+
+} // namespace laio::net
+
+#endif // POISONEDEXCEPTION_H
