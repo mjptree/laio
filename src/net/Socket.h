@@ -5,6 +5,8 @@
 
 #include <variant>
 #include <chrono>
+#include <gsl/span>
+#include "IoSpanMut.h"
 #include "SocketAddr.h"
 
 namespace laio {
@@ -33,11 +35,11 @@ namespace laio {
 
             Result<Socket> duplicate() noexcept;
 
-            Result<std::size_t> recv_with_flags(unsigned char buf[], int flags) noexcept;
+            Result<std::size_t> recv_with_flags(gsl::span<unsigned char> buf, int flags) noexcept;
 
-            Result<std::size_t> read(unsigned char buf[]) noexcept;
+            Result<std::size_t> read(gsl::span<unsigned char> buf) noexcept;
 
-            Result<std::size_t> read_vectored(IoSliceMut bufs[]) noexcept;
+            Result<std::size_t> read_vectored(gsl::span<IoSpanMut> buf) noexcept;
         };
 
     } // namespace net

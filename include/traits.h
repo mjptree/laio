@@ -4,10 +4,10 @@
 namespace laio::trait {
 
     template<typename T>
-    constexpr bool send = false;
+    constexpr bool is_send = false;
 
     template<typename T>
-    constexpr bool sync = false;
+    constexpr bool is_sync = false;
 
     template<typename T>
     constexpr bool as_raw_handle = false;

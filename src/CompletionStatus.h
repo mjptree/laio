@@ -42,10 +42,10 @@ namespace laio {
     namespace trait {
 
         template<>
-        constexpr bool send<CompletionStatus> = true;
+        constexpr bool is_send<CompletionStatus> = true;
 
         template<>
-        constexpr bool sync<CompletionStatus> = true;
+        constexpr bool is_sync<CompletionStatus> = true;
 
     } // namespace trait
 

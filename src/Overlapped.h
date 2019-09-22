@@ -51,10 +51,10 @@ namespace laio {
     namespace trait {
 
         template<>
-        constexpr bool send<Overlapped> = true;
+        constexpr bool is_send<Overlapped> = true;
 
         template<>
-        constexpr bool sync<Overlapped> = true;
+        constexpr bool is_sync<Overlapped> = true;
 
     } // namespace trait
 

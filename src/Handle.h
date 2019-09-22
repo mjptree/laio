@@ -17,10 +17,10 @@ namespace laio {
         HANDLE _raw_handle;
 
         /// Asynchronously read data from file or I/O device associated with this handle
-        Result<std::optional<std::size_t>> read_overlapped_helper(unsigned char buf[], OVERLAPPED *overlapped, BOOLEAN wait) noexcept;
+        Result<std::optional<std::size_t>> read_overlapped_helper(gsl::span<unsigned char> buf, OVERLAPPED *overlapped, BOOLEAN wait) noexcept;
 
         /// Asynchronously write data to file or I/O device associated with this handle
-        Result<std::optional<std::size_t>> write_overlapped_helper(const unsigned char buf[], OVERLAPPED *overlapped, BOOLEAN wait) noexcept;
+        Result<std::optional<std::size_t>> write_overlapped_helper(gsl::span<const unsigned char> buf, OVERLAPPED *overlapped, BOOLEAN wait) noexcept;
     public:
         explicit Handle(HANDLE handle) noexcept
             : _raw_handle(handle) {}
@@ -38,22 +38,22 @@ namespace laio {
         HANDLE&& into_raw() && noexcept;
 
         /// Synchronously write data to file or I/O device associated with this handle
-        Result<std::size_t> write(const unsigned char buf[]) noexcept;
+        Result<std::size_t> write(gsl::span<const unsigned char> buf) noexcept;
 
         /// Synchronously read data from file or I/O device associated with this handle
-        Result<std::size_t> read(unsigned char buf[]) noexcept;
+        Result<std::size_t> read(gsl::span<unsigned char> buf) noexcept;
 
         /// Asynchronously read data from file or I/O device and return immediately
-        Result<std::optional<std::size_t>> read_overlapped(unsigned char buf[], OVERLAPPED *overlapped) noexcept;
+        Result<std::optional<std::size_t>> read_overlapped(gsl::span<unsigned char> buf, OVERLAPPED *overlapped) noexcept;
 
         /// Asynchronously read data from file or I/O device and wait for completion
-        Result<std::size_t> read_overlapped_wait(unsigned char buf[], OVERLAPPED *overlapped) noexcept;
+        Result<std::size_t> read_overlapped_wait(gsl::span<unsigned char> buf, OVERLAPPED *overlapped) noexcept;
 
         /// Asynchronously write data to file or I/O device and return immediately
-        Result<std::optional<std::size_t>> write_overlapped(const unsigned char buf[],  OVERLAPPED *overlapped) noexcept;
+        Result<std::optional<std::size_t>> write_overlapped(gsl::span<const unsigned char> buf,  OVERLAPPED *overlapped) noexcept;
 
         /// Asynchronously write data to file or I/O device and wait for completion
-        Result<std::size_t> write_overlapped_wait(const unsigned char buf[], OVERLAPPED *overlapped) noexcept;
+        Result<std::size_t> write_overlapped_wait(gsl::span<const unsigned char> buf, OVERLAPPED *overlapped) noexcept;
 
         // TODO: - Implement assignment and move assignment operator overloads
         //       - Revisit available constructors, consider deleting copy constructor

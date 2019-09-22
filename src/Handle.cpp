@@ -1,5 +1,6 @@
 #include <algorithm>
 #include <limits>
+#include <gsl/span>
 #include "win_error.h"
 #include "Overload.h"
 #include "Handle.h"
@@ -22,12 +23,14 @@ namespace laio {
         return std::move(temp); // NOLINT(hicpp-move-const-arg,performance-move-const-arg)
     }
 
-    Result<std::size_t> Handle::write(const unsigned char *buf) noexcept {
+    Result<std::size_t> Handle::write(gsl::span<const unsigned char> buf) noexcept {
         DWORD bytes = 0;
-        const DWORD len = (std::min)(sizeof buf, (std::numeric_limits<std::size_t>::max)());
+
+        // For unsigned char `buf.size_bytes() == buf.size()`
+        const DWORD len = (std::min)(static_cast<unsigned int>(buf.size_bytes()), (std::numeric_limits<std::size_t>::max)());
         const BOOL res = WriteFile(
                 _raw_handle,
-                buf,
+                buf.data(),
                 len,
                 &bytes,
                 nullptr
@@ -39,12 +42,14 @@ namespace laio {
         }
     }
 
-    Result<std::size_t> Handle::read(unsigned char *buf) noexcept {
+    Result<std::size_t> Handle::read(gsl::span<unsigned char> buf) noexcept {
         DWORD bytes = 0;
-        const DWORD len = (std::min)(sizeof buf, (std::numeric_limits<std::size_t>::max)());
+
+        // For unsigned char `buf.size_bytes() == buf.size()`
+        const DWORD len = (std::min)(static_cast<unsigned int>(buf.size_bytes()), (std::numeric_limits<std::size_t>::max)());
         const BOOL res = ReadFile(
                 _raw_handle,
-                buf,
+                buf.data(),
                 len,
                 &bytes,
                 nullptr
@@ -56,11 +61,11 @@ namespace laio {
         }
     }
 
-    Result<std::optional<std::size_t>> Handle::read_overlapped(unsigned char *buf, OVERLAPPED *overlapped) noexcept {
+    Result<std::optional<std::size_t>> Handle::read_overlapped(gsl::span<unsigned char> buf, OVERLAPPED *overlapped) noexcept {
         return read_overlapped_helper(buf, overlapped, FALSE);
     }
 
-    Result<std::size_t> Handle::read_overlapped_wait(unsigned char *buf, OVERLAPPED *overlapped) noexcept {
+    Result<std::size_t> Handle::read_overlapped_wait(gsl::span<unsigned char> buf, OVERLAPPED *overlapped) noexcept {
         const Result<std::optional<std::size_t>> res = read_overlapped_helper(buf, overlapped, TRUE);
 
         // Does not throw if it accesses a `std::nullopt`, but due to `wait == TRUE`, that would constitute a logic error.
@@ -71,11 +76,13 @@ namespace laio {
     }
 
     Result<std::optional<std::size_t>>
-    Handle::read_overlapped_helper(unsigned char *buf, OVERLAPPED *overlapped, BOOLEAN wait) noexcept {
-        const DWORD len = (std::min)(sizeof buf, (std::numeric_limits<std::size_t>::max)());
+    Handle::read_overlapped_helper(gsl::span<unsigned char> buf, OVERLAPPED *overlapped, BOOLEAN wait) noexcept {
+
+        // For unsigned char `buf.size_bytes() == buf.size()`
+        const DWORD len = (std::min)(static_cast<unsigned int>(buf.size_bytes()), (std::numeric_limits<std::size_t>::max)());
         BOOL res = ReadFile(
                 _raw_handle,
-                buf,
+                buf.data(),
                 len,
                 nullptr,
                 overlapped
@@ -106,11 +113,11 @@ namespace laio {
         return static_cast<std::size_t>(bytes);
     }
 
-    Result<std::optional<std::size_t>> Handle::write_overlapped(const unsigned char *buf, OVERLAPPED *overlapped) noexcept {
+    Result<std::optional<std::size_t>> Handle::write_overlapped(gsl::span<const unsigned char> buf, OVERLAPPED *overlapped) noexcept {
         return write_overlapped_helper(buf, overlapped, FALSE);
     }
 
-    Result<std::size_t> Handle::write_overlapped_wait(const unsigned char *buf, OVERLAPPED *overlapped) noexcept {
+    Result<std::size_t> Handle::write_overlapped_wait(gsl::span<const unsigned char> buf, OVERLAPPED *overlapped) noexcept {
         const Result<std::optional<std::size_t>> res = write_overlapped_helper(buf, overlapped, TRUE);
 
         // Does not throw if it accesses a `std::nullopt`, but due to `wait == TRUE`, that would constitute a logic error.
@@ -121,11 +128,13 @@ namespace laio {
     }
 
     Result<std::optional<std::size_t>>
-    Handle::write_overlapped_helper(const unsigned char *buf, OVERLAPPED *overlapped, BOOLEAN wait) noexcept {
-        const DWORD len = (std::min)(sizeof buf, (std::numeric_limits<std::size_t>::max)());
+    Handle::write_overlapped_helper(gsl::span<const unsigned char> buf, OVERLAPPED *overlapped, BOOLEAN wait) noexcept {
+
+        // For unsigned char `buf.size_bytes() == buf.size()`
+        const DWORD len = (std::min)(static_cast<unsigned int>(buf.size_bytes()), (std::numeric_limits<std::size_t>::max)());
         BOOL res = WriteFile(
                 _raw_handle,
-                buf,
+                buf.data(),
                 len,
                 nullptr,
                 overlapped

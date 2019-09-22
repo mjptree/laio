@@ -5,6 +5,7 @@
 #include <optional>
 #include <tuple>
 #include <Windows.h>
+#include <gsl/span>
 #include "SocketAddr.h"
 
 // Symbol defined as __STRUCT__ in <combaseapi.h>
@@ -21,11 +22,11 @@ namespace laio {
 
         struct TcpStreamExt {
 
-            virtual Result<std::optional<std::size_t>> read_overlapped(unsigned char buf[], OVERLAPPED* overlapped) noexcept = 0;
-            virtual Result<std::optional<std::size_t>> write_overlapped(const unsigned char buf[], OVERLAPPED* overlapped) noexcept = 0;
-            virtual Result<std::optional<std::size_t>> connect_overlapped(const SocketAddr& address, const unsigned char buf[], OVERLAPPED* overlapped) noexcept = 0;
+            virtual Result<std::optional<std::size_t>> read_overlapped(gsl::span<unsigned char> buf, OVERLAPPED* overlapped) noexcept = 0;
+            virtual Result<std::optional<std::size_t>> write_overlapped(gsl::span<const unsigned char> buf, OVERLAPPED* overlapped) noexcept = 0;
+            virtual Result<std::optional<std::size_t>> connect_overlapped(const SocketAddr& address, gsl::span<const unsigned char> buf, OVERLAPPED* overlapped) noexcept = 0;
             virtual Result<std::monostate> connect_complete() noexcept = 0;
-            virtual Result<std::tuple<std::size_t, unsigned long>> recv_overlapped(unsigned char buf[], OVERLAPPED* overlapped) noexcept = 0;
+            virtual Result<std::tuple<std::size_t, unsigned long>> recv_overlapped(gsl::span<unsigned char> buf, OVERLAPPED* overlapped) noexcept = 0;
             virtual ~TcpStreamExt() = default;
 
         };
