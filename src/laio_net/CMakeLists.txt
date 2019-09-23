@@ -23,14 +23,14 @@ set(laio_net_interfaces
         )
 
 # Define target
-add_library(net
+add_library(laio_net
         INTERFACE
         )
-target_sources(net
+target_sources(laio_net
         INTERFACE
             "$<BUILD_INTERFACE:${laio_net_headers};${laio_net_interfaces}>"
         )
-target_include_directories(net
+target_include_directories(laio_net
         INTERFACE
             ${CMAKE_CURRENT_SOURCE_DIR}/
             utils

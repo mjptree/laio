@@ -19,21 +19,33 @@ if(NOT TARGET Catch2)
     add_subdirectory(dependencies/Catch2)
 endif()
 
+# Collect public interfaces
+set(laio_public_headers
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/interfaces.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/traits.h
+        )
+
 # Build library
 add_library(laio
-        src/Handle.cpp
-        src/CompletionPort.cpp
-        src/CompletionStatus.cpp
-        src/Overlapped.cpp
+        INTERFACE
+        )
+target_sources(laio
+        INTERFACE
+            "$<BUILD_INTERFACE:${laio_public_headers}>"
         )
 target_include_directories(laio
-        PUBLIC
+        INTERFACE
             include
-        #PRIVATE
-            src/utils
         )
+add_subdirectory(src/laio_iocp)
 add_subdirectory(src/laio_net)
-target_link_libraries(laio windows_system_error GSL net)
+target_link_libraries(laio
+        INTERFACE
+            windows_system_error
+            GSL
+            laio_iocp
+            laio_net
+        )
 
 # Build tests
 add_executable(test_laio

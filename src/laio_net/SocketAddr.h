@@ -7,7 +7,7 @@
 namespace laio::net {
 
         class SocketAddr {
-            std::variant<SocketAddrV4, SocketAddrV6> _
+            std::variant<SocketAddrV4, SocketAddrV6> _;
 
         };
 
