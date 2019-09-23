@@ -32,7 +32,7 @@ target_include_directories(laio
         #PRIVATE
             src/utils
         )
-add_subdirectory(src/net)
+add_subdirectory(src/laio_net)
 target_link_libraries(laio windows_system_error GSL net)
 
 # Build tests

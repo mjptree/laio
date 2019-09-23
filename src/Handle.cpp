@@ -8,8 +8,6 @@
 namespace laio {
 
     Handle::~Handle() noexcept {
-
-        // TODO: Determine, whether `CloseHandle` is not in fact taking care of invalid handle values itself
         if (_raw_handle != nullptr) CloseHandle(_raw_handle);
     }
 

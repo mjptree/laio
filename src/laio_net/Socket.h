@@ -5,6 +5,7 @@
 
 #include <variant>
 #include <chrono>
+#include <mutex>
 #include <gsl/span>
 #include "IoSpanMut.h"
 #include "SocketAddr.h"
@@ -23,11 +24,29 @@ namespace laio {
                 : _raw_socket{socket} {}
 
             explicit constexpr Socket(SOCKET&& socket) noexcept
-                : _raw_socket{std::move(socket)} {}
+                : _raw_socket{std::move(socket)} {} // NOLINT(hicpp-move-const-arg,performance-move-const-arg)
+                
+            ~Socket() noexcept {
+                
+                // TODO: Handle consumption of the object through call to `into_raw_socket`
+                closesocket(_raw_socket);
+            }
 
-            static void init() noexcept;
+            static void init() { // TODO: Consider changing return type to Result<std::monostate>
+                static std::once_flag onceFlag;
+                std::call_once(onceFlag, []{
+                    WSADATA data;
+                    std::memset(&data, 0, sizeof(data));
+                    /* const DWORD ret = */ WSAStartup(0x202, &data); // Error code encoded in return value (0 for success)
+                    std::atexit([]{
+                        WSACleanup(); // Can fail - error can be retrieved with WSAGetLastError()
+                    });
+                });
+            }
 
-            static Result<Socket> create(const SocketAddr& address, const int type) noexcept;
+            static Result<Socket> create(const SocketAddr& address, const int type) noexcept {
+                
+            }
 
             Result<std::monostate> connect_timeout(const SocketAddr& addr, const std::chrono::nanoseconds timeout) noexcept;
 

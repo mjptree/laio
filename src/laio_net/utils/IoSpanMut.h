@@ -44,7 +44,7 @@ namespace laio {
 
             inline gsl::span<const unsigned char> as_span() noexcept {
                 return gsl::span<const unsigned char>{
-                    reinterpret_cast<unsigned char*>(_raw_wsa_buffer.buf),
+                    reinterpret_cast<const unsigned char*>(_raw_wsa_buffer.buf),
                     static_cast<int>(_raw_wsa_buffer.len)
                 };
             }
