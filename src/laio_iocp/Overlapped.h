@@ -14,18 +14,18 @@ namespace laio {
     using Result = std::variant<T, std::exception>;
 
     class Overlapped {
-        
+
         OVERLAPPED _raw_overlapped;
-        
+
     public:
-        
+
         explicit constexpr Overlapped(const OVERLAPPED& overlapped) noexcept
             : _raw_overlapped{overlapped} {}
 
         explicit constexpr Overlapped(OVERLAPPED&& overlapped) noexcept
-            : _raw_overlapped{std::move(overlapped)} {}
+            : _raw_overlapped{std::move(overlapped)} {} // NOLINT(hicpp-move-const-arg,performance-move-const-arg)
 
-        constexpr operator OVERLAPPED() const noexcept {
+        constexpr operator OVERLAPPED() const noexcept { // NOLINT(google-explicit-constructor,hicpp-explicit-conversions)
             return _raw_overlapped;
         }
 
@@ -87,7 +87,7 @@ namespace laio {
         HANDLE& event() noexcept {
             return _raw_overlapped.hEvent;
         }
-        
+
     };
 
     namespace trait {
