@@ -4,7 +4,6 @@ cmake_minimum_required(VERSION 3.1)
 set(laio_net_headers
         ${CMAKE_CURRENT_SOURCE_DIR}/AcceptAddr.h
         ${CMAKE_CURRENT_SOURCE_DIR}/AcceptAddrBuf.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/IpAddr.h
         ${CMAKE_CURRENT_SOURCE_DIR}/Ipv4Addr.h
         ${CMAKE_CURRENT_SOURCE_DIR}/Ipv6Addr.h
         ${CMAKE_CURRENT_SOURCE_DIR}/Socket.h
@@ -20,6 +19,7 @@ set(laio_net_headers
 
 # Collect interfaces
 set(laio_net_interfaces
+        ${CMAKE_CURRENT_SOURCE_DIR}/interfaces/IpAddr.h
         ${CMAKE_CURRENT_SOURCE_DIR}/interfaces/TcpListenerExt.h
         ${CMAKE_CURRENT_SOURCE_DIR}/interfaces/TcpStreamExt.h
         ${CMAKE_CURRENT_SOURCE_DIR}/interfaces/UdpSocketExt.h
