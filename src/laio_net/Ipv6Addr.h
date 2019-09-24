@@ -1,5 +1,5 @@
-#ifndef IPV4ADDR_H
-#define IPV4ADDR_H
+#ifndef IPV6ADDR_H
+#define IPV6ADDR_H
 
 #include <variant>
 
@@ -10,10 +10,10 @@ namespace laio {
 
     namespace net {
 
-        class Ipv4Addr {};
+        class Ipv6Addr {};
 
     } // namespace net
 
 } // namespace laio
 
-#endif // IPV4ADDR_H
+#endif // IPV6ADDR_H

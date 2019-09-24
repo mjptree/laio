@@ -1,8 +1,19 @@
-//
-// Created by Michael on 23.09.2019.
-//
+#ifndef IPADDR_H
+#define IPADDR_H
 
-#ifndef LAIO_IPADDR_H
-#define LAIO_IPADDR_H
+#include <variant>
 
-#endif //LAIO_IPADDR_H
+namespace laio {
+
+    template<typename T>
+    using Result = std::variant<T, std::exception>;
+
+    namespace net {
+
+        class IpAddr {};
+
+    } // namespace net
+
+} // namespace laio
+
+#endif // IPADDR_H

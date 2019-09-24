@@ -1,8 +1,19 @@
-//
-// Created by Michael on 23.09.2019.
-//
+#ifndef IPV4ADDR_H
+#define IPV4ADDR_H
 
-#ifndef LAIO_IPV4ADDR_H
-#define LAIO_IPV4ADDR_H
+#include <variant>
 
-#endif //LAIO_IPV4ADDR_H
+namespace laio {
+
+    template<typename T>
+    using Result = std::variant<T, std::exception>;
+
+    namespace net {
+
+        class Ipv4Addr {};
+
+    } // namespace net
+
+} // namespace laio
+
+#endif // IPV4ADDR_H
