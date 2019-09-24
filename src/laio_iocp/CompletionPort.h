@@ -12,6 +12,8 @@
 
 namespace laio {
 
+    using std::uint_fast32_t;
+
     template<typename T>
     using Result = std::variant<T, std::exception>;
 
@@ -19,34 +21,14 @@ namespace laio {
 
         Handle _handle;
 
-        /// Associates a raw windows I/O handle to this I/O completion port
-        Result<std::monostate> _add(const std::size_t token, const HANDLE& handle) noexcept {
-
-            // For 32-bit systems: int  = long = ptr = 32b
-            // For 64-bit Unix   : long = ptr  = 64b and int = 32b
-            // for 64-bit Windows: long long = ptr = 64b and int = long = 32b
-            static_assert(sizeof token == sizeof(ULONG_PTR));
-            HANDLE ret = CreateIoCompletionPort(
-                    handle,
-                    _handle.raw(),
-                    static_cast<ULONG_PTR>(token),
-                    0
-            );
-            if (ret == nullptr) {
-                return wse::win_error{};
-            }
-
-            // ret == this->_handle.raw()
-            return std::monostate{};
-        }
-
+        /// Public member functions
     public:
 
         explicit CompletionPort(const Handle&& handle) noexcept
             : _handle{std::move(handle)} {} // NOLINT(hicpp-move-const-arg,performance-move-const-arg)
 
         /// Create new windows I/O completion port with associated number of concurrent threads
-        static Result<CompletionPort> create(unsigned long threads) noexcept {
+        static Result<CompletionPort> create(uint_fast32_t threads) noexcept {
 
             // nullptr converts to NULL macro. Clang-tidy advises to use nullptr in places, which would be set to NULL.
             HANDLE ret = CreateIoCompletionPort(
@@ -151,6 +133,31 @@ namespace laio {
             }
             return std::monostate{};
         }
+
+        /// Private helper methods
+    private:
+
+        /// Associates a raw windows I/O handle to this I/O completion port
+        Result<std::monostate> _add(const std::size_t token, const HANDLE& handle) noexcept {
+
+            // For 32-bit systems: int  = long = ptr = 32b
+            // For 64-bit Unix   : long = ptr  = 64b and int = 32b
+            // for 64-bit Windows: long long = ptr = 64b and int = long = 32b
+            static_assert(sizeof token == sizeof(ULONG_PTR));
+            HANDLE ret = CreateIoCompletionPort(
+                    handle,
+                    _handle.raw(),
+                    static_cast<ULONG_PTR>(token),
+                    0
+            );
+            if (ret == nullptr) {
+                return wse::win_error{};
+            }
+
+            // ret == this->_handle.raw()
+            return std::monostate{};
+        }
+
     };
 
     namespace trait {
