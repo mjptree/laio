@@ -47,12 +47,12 @@ namespace laio {
                     return true;
             }
 
-            /// Return `false`, as this IP address is implement as IPv6
+            /// Return `false`, as this IP address is implemented as IPv6
             [[nodiscard]] bool is_ipv4() const noexcept override {
                     return false;
             }
 
-            /// Return `true`, as this IP address is implement as IPv6
+            /// Return `true`, as this IP address is implemented as IPv6
             [[nodiscard]] bool is_ipv6() const noexcept override {
                     return true;
             }
