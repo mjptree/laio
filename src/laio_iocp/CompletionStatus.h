@@ -8,11 +8,11 @@
 namespace laio {
 
     class CompletionStatus {
-        
+
         OVERLAPPED_ENTRY _raw_overlapped_entry;
-        
+
     public:
-        
+
         explicit CompletionStatus(const OVERLAPPED_ENTRY& overlappedEntry) noexcept
             : _raw_overlapped_entry{overlappedEntry} {}
 
@@ -24,7 +24,7 @@ namespace laio {
         }
 
         /// Create new custom completion status
-        static CompletionStatus create(const unsigned long bytes, std::size_t token, Overlapped* overlapped) noexcept {
+        static CompletionStatus create(const uint32_t bytes, std::size_t token, Overlapped* overlapped) noexcept {
             static_assert(sizeof token == sizeof(ULONG_PTR));
             return CompletionStatus{ OVERLAPPED_ENTRY {
                     static_cast<ULONG_PTR>(token),
@@ -45,8 +45,8 @@ namespace laio {
         }
 
         /// Returns the number of bytes that have been transferred in the I/O operation associated with this completion status
-        unsigned long bytes_transferred() noexcept {
-            return static_cast<unsigned long>(_raw_overlapped_entry.dwNumberOfBytesTransferred);
+        uint32_t bytes_transferred() noexcept {
+            return static_cast<uint32_t>(_raw_overlapped_entry.dwNumberOfBytesTransferred);
         }
 
         /// Return token associated with the file handle whose I/O operation has completed
@@ -63,7 +63,7 @@ namespace laio {
         OVERLAPPED_ENTRY* entry() noexcept {
             return &_raw_overlapped_entry;
         }
-        
+
     };
 
     namespace trait {

@@ -7,10 +7,13 @@
 #include <iostream>
 #include <optional>
 #include <variant>
+#include <cstdint>
 #include <win_error.h>
 #include "Overload.h"
 
 namespace laio {
+
+    using std::uint8_t;
 
     template<typename T>
     using Result = std::variant<T, std::exception>;
@@ -46,7 +49,7 @@ namespace laio {
         }
 
         /// Synchronously write data to file or I/O device associated with this handle
-        Result<std::size_t> write(gsl::span<const unsigned char> buf) noexcept {
+        Result<std::size_t> write(gsl::span<const uint8_t> buf) noexcept {
             DWORD bytes = 0;
 
             // For unsigned char `buf.size_bytes() == buf.size()`
@@ -66,7 +69,7 @@ namespace laio {
         }
 
         /// Synchronously read data from file or I/O device associated with this handle
-        Result<std::size_t> read(gsl::span<unsigned char> buf) noexcept {
+        Result<std::size_t> read(gsl::span<uint8_t> buf) noexcept {
             DWORD bytes = 0;
 
             // For unsigned char `buf.size_bytes() == buf.size()`
@@ -86,12 +89,12 @@ namespace laio {
         }
 
         /// Asynchronously read data from file or I/O device and return immediately
-        Result<std::optional<std::size_t>> read_overlapped(gsl::span<unsigned char> buf, OVERLAPPED *overlapped) noexcept {
+        Result<std::optional<std::size_t>> read_overlapped(gsl::span<uint8_t> buf, OVERLAPPED *overlapped) noexcept {
             return _read_overlapped_helper(buf, overlapped, FALSE);
         }
 
         /// Asynchronously read data from file or I/O device and wait for completion
-        Result<std::size_t> read_overlapped_wait(gsl::span<unsigned char> buf, OVERLAPPED *overlapped) noexcept {
+        Result<std::size_t> read_overlapped_wait(gsl::span<uint8_t> buf, OVERLAPPED *overlapped) noexcept {
             const Result<std::optional<std::size_t>> res = _read_overlapped_helper(buf, overlapped, TRUE);
 
             // Does not throw if it accesses a `std::nullopt`, but due to `wait == TRUE`, that would constitute a logic error.
@@ -102,12 +105,12 @@ namespace laio {
         }
 
         /// Asynchronously write data to file or I/O device and return immediately
-        Result<std::optional<std::size_t>> write_overlapped(gsl::span<const unsigned char> buf,  OVERLAPPED *overlapped) noexcept {
+        Result<std::optional<std::size_t>> write_overlapped(gsl::span<const uint8_t> buf,  OVERLAPPED *overlapped) noexcept {
             return _write_overlapped_helper(buf, overlapped, FALSE);
         }
 
         /// Asynchronously write data to file or I/O device and wait for completion
-        Result<std::size_t> write_overlapped_wait(gsl::span<const unsigned char> buf, OVERLAPPED *overlapped) noexcept {
+        Result<std::size_t> write_overlapped_wait(gsl::span<const uint8_t> buf, OVERLAPPED *overlapped) noexcept {
             const Result<std::optional<std::size_t>> res = _write_overlapped_helper(buf, overlapped, TRUE);
 
             // Does not throw if it accesses a `std::nullopt`, but due to `wait == TRUE`, that would constitute a logic error.
@@ -121,7 +124,7 @@ namespace laio {
     private:
 
         /// Asynchronously read data from file or I/O device associated with this handle
-        Result<std::optional<std::size_t>> _read_overlapped_helper(gsl::span<unsigned char> buf, OVERLAPPED *overlapped, BOOLEAN wait) noexcept {
+        Result<std::optional<std::size_t>> _read_overlapped_helper(gsl::span<uint8_t> buf, OVERLAPPED *overlapped, BOOLEAN wait) noexcept {
 
             // For unsigned char `buf.size_bytes() == buf.size()`
             const DWORD len = (std::min)(static_cast<unsigned int>(buf.size_bytes()), (std::numeric_limits<std::size_t>::max)());
@@ -159,7 +162,7 @@ namespace laio {
         }
 
         /// Asynchronously write data to file or I/O device associated with this handle
-        Result<std::optional<std::size_t>> _write_overlapped_helper(gsl::span<const unsigned char> buf, OVERLAPPED *overlapped, BOOLEAN wait) noexcept {
+        Result<std::optional<std::size_t>> _write_overlapped_helper(gsl::span<const uint8_t> buf, OVERLAPPED *overlapped, BOOLEAN wait) noexcept {
 
             // For unsigned char `buf.size_bytes() == buf.size()`
             const DWORD len = (std::min)(static_cast<unsigned int>(buf.size_bytes()), (std::numeric_limits<std::size_t>::max)());

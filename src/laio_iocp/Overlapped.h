@@ -5,10 +5,13 @@
 
 #include <minwinbase.h>
 #include <variant>
+#include <cstdint>
 #include <win_error.h>
 #include "traits.h"
 
 namespace laio {
+
+    using std::uint64_t;
 
     template<typename T>
     using Result = std::variant<T, std::exception>;
@@ -67,15 +70,15 @@ namespace laio {
         }
 
         /// Set the offset inside this overlapped structure
-        void set_offset(unsigned long long offset) noexcept {
+        void set_offset(uint64_t offset) noexcept {
             _raw_overlapped.Offset = static_cast<DWORD>(offset);
             _raw_overlapped.OffsetHigh = static_cast<DWORD>(offset >> 32u);
         }
 
         /// Return the offset inside this overlapped structure
-        unsigned long long offset() noexcept {
-            return static_cast<unsigned long long>(_raw_overlapped.Offset)
-                   | (static_cast<unsigned long long>(_raw_overlapped.OffsetHigh) << 32u);
+        uint64_t offset() noexcept {
+            return static_cast<uint64_t>(_raw_overlapped.Offset)
+                   | (static_cast<uint64_t>(_raw_overlapped.OffsetHigh) << 32u);
         }
 
         /// Set the `hEvent`inside this overlapped structure
