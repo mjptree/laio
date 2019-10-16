@@ -13,6 +13,16 @@ namespace laio {
 
     namespace net {
 
+        enum class Ipv6MulticastScope {
+            InterfaceLocal,
+            LinkLocal,
+            RealmLocal,
+            AdminLocal,
+            SiteLocal,
+            OrganizationLocal,
+            Global
+        };
+
         class Ipv6Addr : public interface::IpAddr {
 
             IN6_ADDR _raw_ipv6_address;

@@ -16,7 +16,7 @@ namespace laio {
     using std::uint8_t;
 
     template<typename T>
-    using Result = std::variant<T, std::exception>;
+    using Result = std::variant<T, wse::win_error>;
 
     namespace iocp {
 
@@ -28,10 +28,17 @@ namespace laio {
         public:
 
             explicit Handle(HANDLE handle) noexcept
-                    : _raw_handle(handle) {}
+                : _raw_handle{std::move(handle)} {} // NOLINT(hicpp-move-const-arg,performance-move-const-arg)
 
-            explicit Handle(HANDLE &&handle) noexcept
-                    : _raw_handle(std::move(handle)) {} // NOLINT(hicpp-move-const-arg,performance-move-const-arg)
+            Handle(const Handle& other) noexcept = delete;
+
+            Handle(Handle&& other) noexcept
+                : _raw_handle{std::move(other._raw_handle)} // NOLINT(hicpp-move-const-arg,performance-move-const-arg)
+            {
+                other._raw_handle = nullptr;
+            }
+
+            // TODO: Implement Rule-of-5
 
             /// Close windows I/O handle before clean-up
             ~Handle() noexcept {
@@ -105,7 +112,7 @@ namespace laio {
                 // Does not throw if it accesses a `std::nullopt`, but due to `wait == TRUE`, that would constitute a logic error.
                 return std::visit(Overload{
                         [](const std::optional<std::size_t> &arg) -> Result<std::size_t> { return *arg; },
-                        [](const std::exception &arg) -> Result<std::size_t> { return arg; },
+                        [](const wse::win_error &arg) -> Result<std::size_t> { return arg; },
                 }, res);
             }
 
@@ -122,7 +129,7 @@ namespace laio {
                 // Does not throw if it accesses a `std::nullopt`, but due to `wait == TRUE`, that would constitute a logic error.
                 return std::visit(Overload{
                         [](const std::optional<std::size_t> &arg) -> Result<std::size_t> { return *arg; },
-                        [](const std::exception &arg) -> Result<std::size_t> { return arg; },
+                        [](const wse::win_error &arg) -> Result<std::size_t> { return arg; },
                 }, res);
             }
 
@@ -202,8 +209,6 @@ namespace laio {
                 return static_cast<std::size_t>(bytes);
             }
 
-            // TODO: - Implement assignment and move assignment operator overloads
-            //       - Revisit available constructors, consider deleting copy constructor
         };
 
     } // namespace iocp

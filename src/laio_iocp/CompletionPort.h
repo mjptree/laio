@@ -15,7 +15,7 @@ namespace laio {
     using std::uint_fast32_t;
 
     template<typename T>
-    using Result = std::variant<T, std::exception>;
+    using Result = std::variant<T, wse::win_error>;
 
     namespace iocp {
 
@@ -26,11 +26,18 @@ namespace laio {
             /// Public member functions
         public:
 
-            explicit CompletionPort(const Handle &&handle) noexcept
-                    : _handle{std::move(handle)} {} // NOLINT(hicpp-move-const-arg,performance-move-const-arg)
+            explicit CompletionPort(Handle handle) noexcept
+                : _handle{std::move(handle)} {} // NOLINT(hicpp-move-const-arg,performance-move-const-arg)
+
+            CompletionPort(const CompletionPort& other) noexcept = delete;
+
+            CompletionPort(CompletionPort&& other) noexcept
+                : _handle{std::move(other._handle)} {} // NOLINT(hicpp-move-const-arg,performance-move-const-arg)
+
+            // TODO: Implement Rule-of-5
 
             /// Create new windows I/O completion port with associated number of concurrent threads
-            static Result<CompletionPort> create(uint_fast32_t threads) noexcept {
+            static Result<CompletionPort> create(uint32_t threads) noexcept {
 
                 // nullptr converts to NULL macro. Clang-tidy advises to use nullptr in places, which would be set to NULL.
                 HANDLE ret = CreateIoCompletionPort(
@@ -168,6 +175,12 @@ namespace laio {
     } // namespace iocp
 
     namespace trait {
+
+        template<>
+        constexpr bool is_send<iocp::CompletionPort> = true;
+
+        template<>
+        constexpr bool is_sync<iocp::CompletionPort> = true;
 
         template<>
         constexpr bool as_raw_handle<iocp::CompletionPort> = true;

@@ -50,6 +50,6 @@ target_link_libraries(laio
 # Build tests
 add_executable(test_laio
         test/testmain.cpp
-        test/test_laio.cpp
+        test/test_laio_iocp.cpp
         )
 target_link_libraries(test_laio windows_system_error Catch2 laio)

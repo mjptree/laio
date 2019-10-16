@@ -14,7 +14,7 @@ namespace laio {
     using std::uint64_t;
 
     template<typename T>
-    using Result = std::variant<T, std::exception>;
+    using Result = std::variant<T, wse::win_error>;
 
     namespace iocp {
 
@@ -24,12 +24,8 @@ namespace laio {
 
         public:
 
-            explicit constexpr Overlapped(const OVERLAPPED &overlapped) noexcept
-                    : _raw_overlapped{overlapped} {}
-
-            explicit constexpr Overlapped(OVERLAPPED &&overlapped) noexcept
-                    : _raw_overlapped{
-                    std::move(overlapped)} {} // NOLINT(hicpp-move-const-arg,performance-move-const-arg)
+            explicit constexpr Overlapped(OVERLAPPED overlapped) noexcept
+                    : _raw_overlapped{std::move(overlapped)} {} // NOLINT(hicpp-move-const-arg,performance-move-const-arg)
 
             constexpr operator OVERLAPPED() const noexcept { // NOLINT(google-explicit-constructor,hicpp-explicit-conversions)
                 return _raw_overlapped;
