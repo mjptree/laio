@@ -7,8 +7,8 @@ namespace laio::net {
 
     class SocketAddrBuf {
 
-        SOCKADDR_STORAGE _socket_address_buffer;
-        int _length;
+        SOCKADDR_STORAGE socket_address_buffer_;
+        int length_;
 
         // TODO: - Implement copy assignment operator
 

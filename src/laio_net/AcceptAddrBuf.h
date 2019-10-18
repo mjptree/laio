@@ -3,9 +3,10 @@
 
 #include <WinSock2.h>
 
-
 #include <variant>
+
 #include "AcceptAddr.h"
+#include "TcpListener.h"
 
 namespace laio {
 
@@ -16,20 +17,27 @@ namespace laio {
 
         class AcceptAddrBuf {
 
-            struct {
-                SOCKADDR_STORAGE _local_socket_address_buffer;
-                unsigned char _padding_1[16];
-                SOCKADDR_STORAGE _remote_socket_address_buffer;
-                unsigned char _padding_2[16];
-            } _inner{};
+            SOCKADDR_STORAGE local_socket_address_buffer_{};
+            SOCKADDR_STORAGE remote_socket_address_buffer_{};
 
         public:
 
-            AcceptAddrBuf() : _inner{} {}
+            constexpr AcceptAddrBuf() noexcept = default;
 
-            //static AcceptAddrBuf create() noexcept;
+            static AcceptAddrBuf create() noexcept {
+                return AcceptAddrBuf{};
+            }
 
-            //Result<AcceptAddr> parse() noexcept;
+            Result<AcceptAddr> parse(TcpListener& socket) noexcept {
+                AcceptAddr ret{
+                    nullptr,
+                    0,
+                    nullptr,
+                    0,
+                    this,
+                };
+                return ret;
+            }
         };
 
     } // namespace net

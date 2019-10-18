@@ -51,5 +51,6 @@ target_link_libraries(laio
 add_executable(test_laio
         test/testmain.cpp
         test/test_laio_iocp.cpp
+        test/test_laio_net.cpp
         )
 target_link_libraries(test_laio windows_system_error Catch2 laio)

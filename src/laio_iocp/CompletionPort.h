@@ -4,11 +4,12 @@
 #include <chrono>
 
 // TODO: Replace by STL span as soon as available
-#include <gsl/span>
-#include <win_error.h>
-#include "traits.h"
-#include "Handle.h"
+#include "gsl/span"
+#include "win_error.h"
+
 #include "CompletionStatus.h"
+#include "Handle.h"
+#include "traits.h"
 
 namespace laio {
 
@@ -21,18 +22,18 @@ namespace laio {
 
         class CompletionPort {
 
-            Handle _handle;
+            Handle handle_;
 
             /// Public member functions
         public:
 
             explicit CompletionPort(Handle handle) noexcept
-                : _handle{std::move(handle)} {} // NOLINT(hicpp-move-const-arg,performance-move-const-arg)
+                : handle_{std::move(handle)} {} // NOLINT(hicpp-move-const-arg,performance-move-const-arg)
 
             CompletionPort(const CompletionPort& other) noexcept = delete;
 
             CompletionPort(CompletionPort&& other) noexcept
-                : _handle{std::move(other._handle)} {} // NOLINT(hicpp-move-const-arg,performance-move-const-arg)
+                : handle_{std::move(other.handle_)} {} // NOLINT(hicpp-move-const-arg,performance-move-const-arg)
 
             // TODO: Implement Rule-of-5
 
@@ -60,24 +61,24 @@ namespace laio {
 
             /// Borrow raw handle to windows I/O completion port
             HANDLE &as_raw_handle() & noexcept {
-                return _handle.raw();
+                return handle_.raw();
             }
 
             /// Extract raw handle to windows I/O completion port and consume wrapper
             HANDLE &&into_raw_handle() && noexcept {
-                return std::move(_handle).into_raw();
+                return std::move(handle_).into_raw();
             }
 
             /// Associates a windows I/O handle to this I/O completion port
             template<typename T, typename = std::enable_if_t<trait::as_raw_handle<T>>>
             Result<std::monostate> add_handle(const std::size_t token, const T &t) noexcept {
-                return _add(token, t.as_raw_handle());
+                return add_(token, t.as_raw_handle());
             }
 
             /// Associates a windows socket to this I/O completion port
             template<typename T, typename = std::enable_if_t<trait::as_raw_socket<T>>>
             Result<std::monostate> add_socket(const std::size_t token, const T &t) noexcept {
-                return _add(token, static_cast<HANDLE>(t.as_raw_socket()));
+                return add_(token, static_cast<HANDLE>(t.as_raw_socket()));
             }
 
 
@@ -88,7 +89,7 @@ namespace laio {
                 LPOVERLAPPED overlapped = nullptr;
                 const DWORD duration = timeout ? static_cast<DWORD>((*timeout).count()) : INFINITE;
                 const BOOL ret = GetQueuedCompletionStatus(
-                        _handle.raw(),
+                        handle_.raw(),
                         &bytes,
                         &token,
                         &overlapped,
@@ -116,7 +117,7 @@ namespace laio {
                 ULONG removed = 0;
                 const DWORD duration = timeout ? static_cast<DWORD>((*timeout).count()) : INFINITE;
                 const BOOL ret = GetQueuedCompletionStatusEx(
-                        _handle.raw(),
+                        handle_.raw(),
                         reinterpret_cast<LPOVERLAPPED_ENTRY>(list.data()),
                         len,
                         &removed,
@@ -135,7 +136,7 @@ namespace laio {
             Result<std::monostate> post(const CompletionStatus status) noexcept {
                 const OVERLAPPED_ENTRY &overlappedEntry = status;
                 const BOOL ret = PostQueuedCompletionStatus(
-                        _handle.raw(),
+                        handle_.raw(),
                         overlappedEntry.dwNumberOfBytesTransferred,
                         overlappedEntry.lpCompletionKey,
                         overlappedEntry.lpOverlapped
@@ -150,7 +151,7 @@ namespace laio {
         private:
 
             /// Associates a raw windows I/O handle to this I/O completion port
-            Result<std::monostate> _add(const std::size_t token, const HANDLE &handle) noexcept {
+            Result<std::monostate> add_(const std::size_t token, const HANDLE &handle) noexcept {
 
                 // For 32-bit systems: int  = long = ptr = 32b
                 // For 64-bit Unix   : long = ptr  = 64b and int = 32b
@@ -158,7 +159,7 @@ namespace laio {
                 static_assert(sizeof token == sizeof(ULONG_PTR));
                 HANDLE ret = CreateIoCompletionPort(
                         handle,
-                        _handle.raw(),
+                        handle_.raw(),
                         static_cast<ULONG_PTR>(token),
                         0
                 );
@@ -166,7 +167,7 @@ namespace laio {
                     return wse::win_error{};
                 }
 
-                // ret == this->_handle.raw()
+                // ret == this->handle_.raw()
                 return std::monostate{};
             }
 

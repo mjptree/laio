@@ -2,12 +2,13 @@
 #define  TCPLISTENEREXT_H
 
 #include <WinSock2.h>
-
-#include <variant>
-#include <tuple>
 #include <Windows.h>
-#include "TcpStream.h"
+
+#include <tuple>
+#include <variant>
+
 #include "AcceptAddrBuf.h"
+#include "TcpStream.h"
 
 // Symbol defined as __STRUCT__ in <combaseapi.h>
 #ifdef interface

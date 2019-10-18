@@ -4,9 +4,12 @@
 #include "WinIncludes.h"
 
 #include <minwinbase.h>
-#include <variant>
+
 #include <cstdint>
-#include <win_error.h>
+#include <variant>
+
+#include "win_error.h"
+
 #include "traits.h"
 
 namespace laio {
@@ -20,26 +23,21 @@ namespace laio {
 
         class Overlapped {
 
-            OVERLAPPED _raw_overlapped;
+            OVERLAPPED raw_overlapped_{};
 
         public:
+            constexpr Overlapped() noexcept = default;
 
             explicit constexpr Overlapped(OVERLAPPED overlapped) noexcept
-                    : _raw_overlapped{std::move(overlapped)} {} // NOLINT(hicpp-move-const-arg,performance-move-const-arg)
+                    : raw_overlapped_{std::move(overlapped)} {} // NOLINT(hicpp-move-const-arg,performance-move-const-arg)
 
             constexpr operator OVERLAPPED() const noexcept { // NOLINT(google-explicit-constructor,hicpp-explicit-conversions)
-                return _raw_overlapped;
+                return raw_overlapped_;
             }
 
             /// Create new zero-initialized overlapped structure
             static Overlapped zero() noexcept {
-                return Overlapped{OVERLAPPED{
-                        0,
-                        0,
-                        {
-                                {0, 0}
-                        }
-                }};
+                return Overlapped{};
             }
 
             /// Create new overlapped structure initialized with `bManualReset` = FALSE
@@ -65,29 +63,29 @@ namespace laio {
 
             /// Return pointer to inner raw `OVERLAPPED` structure
             OVERLAPPED *raw() noexcept {
-                return &_raw_overlapped;
+                return &raw_overlapped_;
             }
 
             /// Set the offset inside this overlapped structure
             void set_offset(uint64_t offset) noexcept {
-                _raw_overlapped.Offset = static_cast<DWORD>(offset);
-                _raw_overlapped.OffsetHigh = static_cast<DWORD>(offset >> 32u);
+                raw_overlapped_.Offset = static_cast<DWORD>(offset);
+                raw_overlapped_.OffsetHigh = static_cast<DWORD>(offset >> 32u);
             }
 
             /// Return the offset inside this overlapped structure
             uint64_t offset() noexcept {
-                return static_cast<uint64_t>(_raw_overlapped.Offset)
-                       | (static_cast<uint64_t>(_raw_overlapped.OffsetHigh) << 32u);
+                return static_cast<uint64_t>(raw_overlapped_.Offset)
+                       | (static_cast<uint64_t>(raw_overlapped_.OffsetHigh) << 32u);
             }
 
             /// Set the `hEvent`inside this overlapped structure
             void set_event(HANDLE event) noexcept {
-                _raw_overlapped.hEvent = event;
+                raw_overlapped_.hEvent = event;
             }
 
             /// Return the `hEvent`inside this overlapped structure
             HANDLE &event() noexcept {
-                return _raw_overlapped.hEvent;
+                return raw_overlapped_.hEvent;
             }
 
         };

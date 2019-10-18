@@ -3,10 +3,12 @@
 
 #include <WinSock2.h>
 
-#include <variant>
 #include <chrono>
 #include <mutex>
-#include <gsl/span>
+#include <variant>
+
+#include "gsl/span"
+
 #include "IoSpanMut.h"
 #include "SocketAddr.h"
 
@@ -18,25 +20,21 @@ namespace laio {
     namespace net {
 
         class Socket {
-            SOCKET _raw_socket;
+            SOCKET raw_socket_;
         public:
-            explicit constexpr Socket(const SOCKET& socket) noexcept
-                : _raw_socket{socket} {}
-
-            explicit constexpr Socket(SOCKET&& socket) noexcept
-                : _raw_socket{std::move(socket)} {} // NOLINT(hicpp-move-const-arg,performance-move-const-arg)
+            explicit constexpr Socket(SOCKET socket) noexcept
+                : raw_socket_{std::move(socket)} {} // NOLINT(hicpp-move-const-arg,performance-move-const-arg)
                 
             ~Socket() noexcept {
                 
                 // TODO: Handle consumption of the object through call to `into_raw_socket`
-                closesocket(_raw_socket);
+                closesocket(raw_socket_);
             }
 
             static void init() { // TODO: Consider changing return type to Result<std::monostate>
                 static std::once_flag onceFlag;
                 std::call_once(onceFlag, []{
-                    WSADATA data;
-                    std::memset(&data, 0, sizeof(data));
+                    WSADATA data{};
                     /* const DWORD ret = */ WSAStartup(0x202, &data); // Error code encoded in return value (0 for success)
                     std::atexit([]{
                         WSACleanup(); // Can fail - error can be retrieved with WSAGetLastError()

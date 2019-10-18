@@ -4,8 +4,9 @@
 #include <WinSock2.h>
 
 #include <variant>
-#include "UdpSocketExt.h"
+
 #include "traits.h"
+#include "UdpSocketExt.h"
 
 namespace laio {
 

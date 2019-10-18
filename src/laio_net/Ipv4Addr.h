@@ -2,6 +2,7 @@
 #define IPV4ADDR_H
 
 #include <variant>
+
 #include "IpAddr.h"
 
 namespace laio {
@@ -13,14 +14,14 @@ namespace laio {
 
     namespace net {
 
-        class Ipv4Addr : public interface::IpAddr {
+        class Ipv4Addr final : public interface::IpAddr {
 
-            IN_ADDR _raw_ipv4_address;
+            IN_ADDR raw_ipv4_address_;
 
         public:
 
             explicit constexpr Ipv4Addr(const uint8_t a, const uint8_t b, const uint8_t c, const uint8_t d) noexcept
-                : _raw_ipv4_address{ /* s_addr */ } {}
+                : raw_ipv4_address_{ /* s_addr */ } {}
 
             /// TODO: To be implemented
             [[nodiscard]] bool is_unspecified() const noexcept override {

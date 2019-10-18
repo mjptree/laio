@@ -10,11 +10,24 @@ namespace laio::net {
 
     class AcceptAddr {
 
-        SOCKADDR* _local_socket_address;
-        int _local_length;
-        SOCKADDR* _remote_socket_address;
-        int _remote_length;
-        AcceptAddrBuf* _data;
+        SOCKADDR* local_socket_address_{};
+        int local_length_{};
+        SOCKADDR* remote_socket_address_{};
+        int remote_length_{};
+        AcceptAddrBuf* data_{};
+
+    public:
+        AcceptAddr(SOCKADDR* localAddress,
+                int localLength,
+                SOCKADDR* remoteAddress,
+                int remoteLength,
+                AcceptAddrBuf* addressBuffer) noexcept
+            : local_socket_address_{std::move(localAddress)},   // NOLINT(hicpp-move-const-arg,performance-move-const-arg)
+            local_length_{std::move(localLength)},              // NOLINT(hicpp-move-const-arg,performance-move-const-arg)
+            remote_socket_address_{std::move(remoteAddress)},   // NOLINT(hicpp-move-const-arg,performance-move-const-arg)
+            remote_length_{std::move(remoteLength)},            // NOLINT(hicpp-move-const-arg,performance-move-const-arg)
+            data_{std::move(addressBuffer)}                     // NOLINT(hicpp-move-const-arg,performance-move-const-arg)
+        {}
 
     };
 

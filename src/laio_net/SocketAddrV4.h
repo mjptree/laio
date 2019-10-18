@@ -14,14 +14,11 @@ namespace laio {
 
         class SocketAddrV4 {
 
-            SOCKADDR_IN _inner;
+            SOCKADDR_IN inner_;
 
         public:
-            explicit constexpr SocketAddrV4(const SOCKADDR_IN& socketAddrV4) noexcept
-                : _inner{socketAddrV4} {}
-
-            explicit constexpr SocketAddrV4(SOCKADDR_IN&& socketAddrV4) noexcept
-                : _inner{std::move(socketAddrV4)} {} // NOLINT(hicpp-move-const-arg,performance-move-const-arg)
+            explicit constexpr SocketAddrV4(SOCKADDR_IN socketAddrV4) noexcept
+                : inner_{std::move(socketAddrV4)} {} // NOLINT(hicpp-move-const-arg,performance-move-const-arg)
 
         };
 

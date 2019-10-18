@@ -4,6 +4,7 @@
 #include <WS2tcpip.h>
 
 #include <variant>
+
 #include "IpAddr.h"
 
 namespace laio {
@@ -23,14 +24,14 @@ namespace laio {
             Global
         };
 
-        class Ipv6Addr : public interface::IpAddr {
+        class Ipv6Addr final : public interface::IpAddr {
 
-            IN6_ADDR _raw_ipv6_address;
+            IN6_ADDR raw_ipv6_address_;
 
         public:
 
             explicit constexpr Ipv6Addr() noexcept
-                : _raw_ipv6_address{} {}
+                : raw_ipv6_address_{} {}
 
             /// TODO: To be implemented
             [[nodiscard]] bool is_unspecified() const noexcept override {

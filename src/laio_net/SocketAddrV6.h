@@ -14,14 +14,11 @@ namespace laio {
 
         class SocketAddrV6 {
 
-            SOCKADDR_IN6 _inner;
+            SOCKADDR_IN6 inner_;
 
         public:
-            explicit constexpr SocketAddrV6(const SOCKADDR_IN6& socketAddrV6) noexcept
-                    : _inner{socketAddrV6} {}
-
-            explicit constexpr SocketAddrV6(SOCKADDR_IN6&& socketAddrV6) noexcept
-            : _inner{std::move(socketAddrV6)} {} // NOLINT(hicpp-move-const-arg,performance-move-const-arg)
+            explicit constexpr SocketAddrV6(SOCKADDR_IN6 socketAddrV6) noexcept
+                : inner_{std::move(socketAddrV6)} {} // NOLINT(hicpp-move-const-arg,performance-move-const-arg)
 
         };
 
