@@ -15,11 +15,7 @@ namespace laio {
             OVERLAPPED_ENTRY raw_overlapped_entry_;
 
         public:
-
-            explicit CompletionStatus(const OVERLAPPED_ENTRY &overlappedEntry) noexcept
-                    : raw_overlapped_entry_{overlappedEntry} {}
-
-            explicit CompletionStatus(OVERLAPPED_ENTRY &&overlappedEntry) noexcept
+            explicit CompletionStatus(OVERLAPPED_ENTRY overlappedEntry) noexcept
                     : raw_overlapped_entry_{
                     std::move(overlappedEntry)} {} // NOLINT(hicpp-move-const-arg,performance-move-const-arg)
 

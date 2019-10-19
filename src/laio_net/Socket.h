@@ -1,5 +1,4 @@
-#ifndef SOCKET_H
-#define SOCKET_H
+#pragma once
 
 #include <WinSock2.h>
 
@@ -62,5 +61,3 @@ namespace laio {
     } // namespace net
 
 } // namespace laio
-
-#endif // SOCKET_H

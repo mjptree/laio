@@ -1,5 +1,4 @@
-#ifndef ACCEPTADDRBUF_H
-#define ACCEPTADDRBUF_H
+#pragma once
 
 #include <WinSock2.h>
 
@@ -43,5 +42,3 @@ namespace laio {
     } // namespace net
 
 } // namespace laio
-
-#endif // ACCEPTADDRBUF_H

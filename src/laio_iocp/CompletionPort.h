@@ -1,5 +1,4 @@
-#ifndef COMPLETIONPORT_H
-#define COMPLETIONPORT_H
+#pragma once
 
 #include <chrono>
 
@@ -195,5 +194,3 @@ namespace laio {
     } // namespace trait
 
 } // namespace laio
-
-#endif // COMPLETIONPORT_H

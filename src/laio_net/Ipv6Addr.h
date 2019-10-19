@@ -1,5 +1,4 @@
-#ifndef IPV6ADDR_H
-#define IPV6ADDR_H
+#pragma once
 
 #include <WS2tcpip.h>
 
@@ -73,5 +72,3 @@ namespace laio {
     } // namespace net
 
 } // namespace laio
-
-#endif // IPV6ADDR_H

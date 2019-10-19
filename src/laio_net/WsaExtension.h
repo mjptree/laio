@@ -1,5 +1,4 @@
-#ifndef WSAEXTENSION_H
-#define WSAEXTENSION_H
+#pragma once
 
 #include <guiddef.h>
 
@@ -15,5 +14,3 @@ namespace laio::net {
     };
 
 } // namespace laio::net
-
-#endif // WSAEXTENSION_H

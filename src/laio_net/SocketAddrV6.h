@@ -1,5 +1,4 @@
-#ifndef SOCKETADDRV6_H
-#define SOCKETADDRV6_H
+#pragma once
 
 #include <WS2tcpip.h>
 
@@ -25,5 +24,3 @@ namespace laio {
     }
 
 } // namespace laio
-
-#endif // SOCKETADDRV6_H

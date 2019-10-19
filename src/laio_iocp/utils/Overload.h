@@ -1,5 +1,4 @@
-#ifndef OVERLOAD_H
-#define OVERLOAD_H
+#pragma once
 
 template<class... Ts>
 struct Overload : Ts... {
@@ -8,5 +7,3 @@ struct Overload : Ts... {
 
 template<class... Ts>
 Overload(Ts...) -> Overload<Ts...>;
-
-#endif // OVERLOAD_H

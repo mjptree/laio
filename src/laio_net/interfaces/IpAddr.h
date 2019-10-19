@@ -1,5 +1,4 @@
-#ifndef IPADDR_H
-#define IPADDR_H
+#pragma once
 
 #include <WinSock2.h>
 
@@ -52,5 +51,3 @@ namespace laio {
     } // namespace net::interface
 
 } // namespace laio
-
-#endif // IPADDR_H

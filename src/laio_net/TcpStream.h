@@ -1,5 +1,4 @@
-#ifndef TCPSTREAM_H
-#define TCPSTREAM_H
+#pragma once
 
 #include <variant>
 
@@ -179,5 +178,3 @@ namespace laio {
     } // namespace trait
 
 } // namespace laio
-
-#endif // TCPSTREAM_H

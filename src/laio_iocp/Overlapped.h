@@ -1,5 +1,4 @@
-#ifndef OVERLAPPED_H
-#define OVERLAPPED_H
+#pragma once
 
 #include "WinIncludes.h"
 
@@ -103,5 +102,3 @@ namespace laio {
     } // namespace trait
 
 } // namespace laio
-
-#endif // OVERLAPPED_H

@@ -1,5 +1,4 @@
-#ifndef  TCPLISTENEREXT_H
-#define  TCPLISTENEREXT_H
+#pragma once
 
 #include <WinSock2.h>
 #include <Windows.h>
@@ -34,5 +33,3 @@ namespace laio {
     } // namespace net::interface
 
 } // namespace laio
-
-#endif // TCPLISTENEREXT_H

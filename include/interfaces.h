@@ -1,5 +1,4 @@
-#ifndef INTERFACES_H
-#define INTERFACES_H
+#pragma once
 
 #include <TcpListenerExt.h>
 #include <TcpStreamExt.h>
@@ -12,5 +11,3 @@ namespace laio::interface {
     using UdpSocketExt = laio::net::interface::UdpSocketExt;
 
 } // namespace laio::interface
-
-#endif // INTERFACES_H

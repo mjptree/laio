@@ -1,5 +1,4 @@
-#ifndef IPV4ADDR_H
-#define IPV4ADDR_H
+#pragma once
 
 #include <variant>
 
@@ -63,5 +62,3 @@ namespace laio {
     } // namespace net
 
 } // namespace laio
-
-#endif // IPV4ADDR_H

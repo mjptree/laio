@@ -1,5 +1,4 @@
-#ifndef ACCEPTADDR_H
-#define ACCEPTADDR_H
+#pragma once
 
 #include "AcceptAddrBuf.h"
 
@@ -32,5 +31,3 @@ namespace laio::net {
     };
 
 } // namespace laio::net
-
-#endif // ACCEPTADDR_H

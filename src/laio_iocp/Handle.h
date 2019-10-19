@@ -1,5 +1,4 @@
-#ifndef LAIO_HANDLE_H
-#define LAIO_HANDLE_H
+#pragma once
 
 #include <WinIncludes.h>
 
@@ -219,5 +218,3 @@ namespace laio {
     } // namespace iocp
 
 } // namespace laio
-
-#endif // HANDLE_H

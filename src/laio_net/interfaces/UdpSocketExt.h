@@ -1,5 +1,4 @@
-#ifndef  UDPSOCKETEXT_H
-#define  UDPSOCKETEXT_H
+#pragma once
 
 #include <Windows.h>
 
@@ -40,5 +39,3 @@ namespace laio {
     } // namespace net::interface
 
 } // namespace laio
-
-#endif // UDPSOCKETEXT_H

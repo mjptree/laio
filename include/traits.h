@@ -1,5 +1,4 @@
-#ifndef TRAITS_H
-#define TRAITS_H
+#pragma once
 
 namespace laio::trait {
 
@@ -28,5 +27,3 @@ namespace laio::trait {
     constexpr bool into_raw_socket = false;
 
 } // namespace laio::trait
-
-#endif // TRAITS_H

@@ -1,5 +1,4 @@
-#ifndef SOCKETADDRV4_H
-#define SOCKETADDRV4_H
+#pragma once
 
 #include <WinSock2.h>
 
@@ -25,5 +24,3 @@ namespace laio {
     }
 
 } // namespace laio
-
-#endif // SOCKETADDRV4_H

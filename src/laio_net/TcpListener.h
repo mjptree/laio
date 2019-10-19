@@ -1,5 +1,4 @@
-#ifndef TCPLISTENER_H
-#define TCPLISTENER_H
+#pragma once
 
 #include <variant>
 
@@ -136,5 +135,3 @@ namespace laio {
     } // namespace trait
 
 } // namespace laio
-
-#endif // TCPLISTENER_H

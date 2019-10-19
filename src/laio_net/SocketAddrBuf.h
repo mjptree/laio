@@ -1,5 +1,4 @@
-#ifndef SOCKETADDRBUF_H
-#define SOCKETADDRBUF_H
+#pragma once
 
 #include <WinSock2.h>
 
@@ -15,5 +14,3 @@ namespace laio::net {
     };
 
 } // namespace laio::net
-
-#endif // SOCKETADDRBUF_H

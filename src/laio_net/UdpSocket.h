@@ -1,5 +1,4 @@
-#ifndef UDPSOCKET_H
-#define UDPSOCKET_H
+#pragma once
 
 #include <WinSock2.h>
 
@@ -244,5 +243,3 @@ namespace laio {
     } // namespace trait
 
 } // namespace laio
-
-#endif // UDPSOCKET_H
