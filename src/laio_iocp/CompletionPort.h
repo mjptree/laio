@@ -19,24 +19,52 @@ namespace laio {
 
     namespace iocp {
 
+        /// Handle to Windows I/O Completion Port
+        ///
+        /// Member attributes:
+        ///     handle_(Handle)
+        ///
+        /// Traits:
+        ///     is_send,
+        ///     is_sync,
+        ///     as_raw_handle,
+        ///     from_raw_handle,
+        ///     into_raw_handle
+        ///
+        /// Specialized wrapper around an ordinary Windows handle, but to a I/O Completion Port. It provides Completion
+        /// Port specific operations and enforces ownership semantics.
         class CompletionPort {
 
             Handle handle_;
 
-            /// Public member functions
         public:
-
+            // Constructors
             explicit CompletionPort(Handle handle) noexcept
                 : handle_{std::move(handle)} {} // NOLINT(hicpp-move-const-arg,performance-move-const-arg)
 
-            CompletionPort(const CompletionPort& other) noexcept = delete;
+            CompletionPort(const CompletionPort& other) = delete;
 
             CompletionPort(CompletionPort&& other) noexcept
                 : handle_{std::move(other.handle_)} {} // NOLINT(hicpp-move-const-arg,performance-move-const-arg)
 
-            // TODO: Implement Rule-of-5
+            // Operator overloads
+            CompletionPort& operator=(const CompletionPort& rhs) = delete;
 
-            /// Create new windows I/O completion port with associated number of concurrent threads
+            CompletionPort& operator=(CompletionPort&& rhs) noexcept {
+                handle_ = std::move(rhs.handle_);
+                return *this;
+            }
+
+            // Public member functions
+
+            /// Create new windows I/O completion port with specified number of concurrent threads
+            ///
+            /// Parameters:
+            ///     std::uint32_t   : threads
+            ///
+            /// Return value:
+            ///     Result<CompletionPort>
+            ///
             static Result<CompletionPort> create(uint32_t threads) noexcept {
 
                 // nullptr converts to NULL macro. Clang-tidy advises to use nullptr in places, which would be set to NULL.
@@ -53,28 +81,64 @@ namespace laio {
             }
 
             /// Wrap raw handle to windows I/O completion port
-            static CompletionPort from_raw_handle(const HANDLE &&handle) noexcept {
-                return CompletionPort{
-                        Handle{std::move(handle)}}; // NOLINT(hicpp-move-const-arg,performance-move-const-arg)
+            ///
+            /// Parameters:
+            ///     HANDLE&&    : handle
+            ///
+            /// Return value:
+            ///     CompletionPort
+            ///
+            static CompletionPort from_raw_handle(HANDLE&& handle) noexcept {
+                return CompletionPort{Handle{std::move(handle)}}; // NOLINT(hicpp-move-const-arg,performance-move-const-arg)
             }
 
             /// Borrow raw handle to windows I/O completion port
-            HANDLE &as_raw_handle() & noexcept {
+            ///
+            /// Parameters:
+            ///     (none)
+            ///
+            /// Return value:
+            ///     HANDLE&
+            ///
+            HANDLE& as_raw_handle() & noexcept {
                 return handle_.raw();
             }
 
             /// Extract raw handle to windows I/O completion port and consume wrapper
-            HANDLE &&into_raw_handle() && noexcept {
+            ///
+            /// Parameters:
+            ///     (none)
+            ///
+            /// Return value:
+            ///     HANDLE&&
+            ///
+            HANDLE&& into_raw_handle() && noexcept {
                 return std::move(handle_).into_raw();
             }
 
             /// Associates a windows I/O handle to this I/O completion port
+            ///
+            /// Parameters:
+            ///     const std::size_t   : token,
+            ///     const T&            : t (as_raw_handle<T>)
+            ///
+            /// Return value:
+            ///     Result<std::monostate>
+            ///
             template<typename T, typename = std::enable_if_t<trait::as_raw_handle<T>>>
-            Result<std::monostate> add_handle(const std::size_t token, const T &t) noexcept {
+            Result<std::monostate> add_handle(const std::size_t token, const T& t) noexcept {
                 return add_(token, t.as_raw_handle());
             }
 
             /// Associates a windows socket to this I/O completion port
+            ///
+            /// Parameters:
+            ///     const std::size_t   : token,
+            ///     const T&            : t (as_raw_socket<T>)
+            ///
+            /// Return value:
+            ///     Result<std::monostate>
+            ///
             template<typename T, typename = std::enable_if_t<trait::as_raw_socket<T>>>
             Result<std::monostate> add_socket(const std::size_t token, const T &t) noexcept {
                 return add_(token, static_cast<HANDLE>(t.as_raw_socket()));
@@ -82,6 +146,13 @@ namespace laio {
 
 
             /// Dequeue completion status from this I/O completion port
+            ///
+            /// Parameters:
+            ///     std::optional<const std::chrono::milliseconds>  : timeout
+            ///
+            /// Return value:
+            ///     Result<CompletionStatus>
+            ///
             Result<CompletionStatus> get(std::optional<const std::chrono::milliseconds> timeout) noexcept {
                 DWORD bytes = 0;
                 DWORD token = 0;
@@ -106,13 +177,20 @@ namespace laio {
             }
 
             /// Dequeue multiple completion statuses from this I/O completion port
+            ///
+            /// Parameters:
+            ///     gsl::span<CompletionStatus>                     : list,
+            ///     std::optional<const std::chrono::milliseconds>  : timeout
+            ///
+            /// Return value:
+            ///     Result<gsl::span<CompletionStatus>>
+            ///
             Result<gsl::span<CompletionStatus>> get_many(gsl::span<CompletionStatus> list,
                                                          std::optional<const std::chrono::milliseconds> timeout) noexcept {
 
                 // Make sure that when writing directly into the span the element widths properly align.
                 static_assert(sizeof(CompletionStatus) == sizeof(OVERLAPPED_ENTRY));
-                const ULONG len = (std::min)(static_cast<unsigned int>(list.size()),
-                                             (std::numeric_limits<std::size_t>::max)());
+                const ULONG len = (std::min)(static_cast<unsigned int>(list.size()), (std::numeric_limits<std::size_t>::max)());
                 ULONG removed = 0;
                 const DWORD duration = timeout ? static_cast<DWORD>((*timeout).count()) : INFINITE;
                 const BOOL ret = GetQueuedCompletionStatusEx(
@@ -132,6 +210,13 @@ namespace laio {
             }
 
             /// Post a custom completion status to this I/O completion port
+            ///
+            /// Parameters:
+            ///     const CompletionStatus  : status
+            ///
+            /// Return value:
+            ///     Result<std::monostate>
+            ///
             Result<std::monostate> post(const CompletionStatus status) noexcept {
                 const OVERLAPPED_ENTRY &overlappedEntry = status;
                 const BOOL ret = PostQueuedCompletionStatus(
@@ -146,11 +231,17 @@ namespace laio {
                 return std::monostate{};
             }
 
-            /// Private helper methods
         private:
-
             /// Associates a raw windows I/O handle to this I/O completion port
-            Result<std::monostate> add_(const std::size_t token, const HANDLE &handle) noexcept {
+            ///
+            /// Parameters:
+            ///     const std::size_t   : token,
+            ///     const HANDLE&       : handle
+            ///
+            /// Return value:
+            ///     Result<std::monostate>
+            ///
+            Result<std::monostate> add_(const std::size_t token, const HANDLE& handle) noexcept {
 
                 // For 32-bit systems: int  = long = ptr = 32b
                 // For 64-bit Unix   : long = ptr  = 64b and int = 32b
