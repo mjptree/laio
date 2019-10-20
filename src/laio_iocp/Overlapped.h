@@ -36,7 +36,7 @@ namespace laio {
             OVERLAPPED raw_overlapped_{};
 
         public:
-            // Constructors
+            // # Constructors
             constexpr Overlapped() noexcept = default;
 
             explicit constexpr Overlapped(OVERLAPPED overlapped) noexcept
@@ -46,7 +46,7 @@ namespace laio {
                 return raw_overlapped_;
             }
 
-            // Public member functions
+            // # Public member functions
 
             /// Create new overlapped structure initialized with `bManualReset` = FALSE
             ///

@@ -22,7 +22,7 @@ namespace laio {
         /// Handle to Windows I/O Completion Port
         ///
         /// Member attributes:
-        ///     handle_(Handle)
+        ///     Handle  : handle_
         ///
         /// Traits:
         ///     is_send,
@@ -38,7 +38,7 @@ namespace laio {
             Handle handle_;
 
         public:
-            // Constructors
+            // # Constructors
             explicit CompletionPort(Handle handle) noexcept
                 : handle_{std::move(handle)} {} // NOLINT(hicpp-move-const-arg,performance-move-const-arg)
 
@@ -47,7 +47,7 @@ namespace laio {
             CompletionPort(CompletionPort&& other) noexcept
                 : handle_{std::move(other.handle_)} {} // NOLINT(hicpp-move-const-arg,performance-move-const-arg)
 
-            // Operator overloads
+            // # Operator overloads
             CompletionPort& operator=(const CompletionPort& rhs) = delete;
 
             CompletionPort& operator=(CompletionPort&& rhs) noexcept {
@@ -55,7 +55,7 @@ namespace laio {
                 return *this;
             }
 
-            // Public member functions
+            // # Public member functions
 
             /// Create new windows I/O completion port with specified number of concurrent threads
             ///
@@ -155,7 +155,7 @@ namespace laio {
             ///
             Result<CompletionStatus> get(std::optional<const std::chrono::milliseconds> timeout) noexcept {
                 DWORD bytes = 0;
-                DWORD token = 0;
+                ULONG_PTR token = 0;
                 LPOVERLAPPED overlapped = nullptr;
                 const DWORD duration = timeout ? static_cast<DWORD>((*timeout).count()) : INFINITE;
                 const BOOL ret = GetQueuedCompletionStatus(
@@ -190,7 +190,7 @@ namespace laio {
 
                 // Make sure that when writing directly into the span the element widths properly align.
                 static_assert(sizeof(CompletionStatus) == sizeof(OVERLAPPED_ENTRY));
-                const ULONG len = (std::min)(static_cast<unsigned int>(list.size()), (std::numeric_limits<std::size_t>::max)());
+                const ULONG len = (std::min)(static_cast<DWORD>(list.size()), static_cast<DWORD>((std::numeric_limits<std::size_t>::max)()));
                 ULONG removed = 0;
                 const DWORD duration = timeout ? static_cast<DWORD>((*timeout).count()) : INFINITE;
                 const BOOL ret = GetQueuedCompletionStatusEx(

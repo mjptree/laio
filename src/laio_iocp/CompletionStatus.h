@@ -25,7 +25,7 @@ namespace laio {
             OVERLAPPED_ENTRY raw_overlapped_entry_{};
 
         public:
-            // Constructors
+            // # Constructors
             constexpr CompletionStatus() noexcept = default;
 
             explicit CompletionStatus(OVERLAPPED_ENTRY overlappedEntry) noexcept
@@ -35,7 +35,7 @@ namespace laio {
                 return raw_overlapped_entry_;
             }
 
-            // Public member functions
+            // # Public member functions
 
             /// Create new custom completion status
             ///
