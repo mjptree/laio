@@ -1,3 +1,5 @@
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "hicpp-move-const-arg"
 #pragma once
 
 #include <WinIncludes.h>
@@ -42,12 +44,12 @@ namespace laio {
         public:
             // # Constructors
             explicit Handle(HANDLE handle) noexcept
-                : raw_handle_{std::move(handle)} {} // NOLINT(hicpp-move-const-arg,performance-move-const-arg)
+                : raw_handle_{std::move(handle)} {}
 
             Handle(const Handle& other) noexcept = delete;
 
             Handle(Handle&& other) noexcept
-                : raw_handle_{std::move(other.raw_handle_)} // NOLINT(hicpp-move-const-arg,performance-move-const-arg)
+                : raw_handle_{std::move(other.raw_handle_)}
             {
                 other.raw_handle_ = nullptr;
             }
@@ -63,7 +65,7 @@ namespace laio {
             Handle& operator=(const Handle& rhs) = delete;
 
             Handle& operator=(Handle&& rhs) noexcept {
-                raw_handle_ = std::move(rhs.raw_handle_); // NOLINT(hicpp-move-const-arg,performance-move-const-arg)
+                raw_handle_ = std::move(rhs.raw_handle_);
                 rhs.raw_handle_ = nullptr;
                 return *this;
             }
@@ -97,9 +99,9 @@ namespace laio {
             /// class. The wrapper is consumed in the process.
             /// The new owner takes the responsibility to clean-up after itself!
             HANDLE&& into_raw() && noexcept {
-                HANDLE temp = std::move(raw_handle_); // NOLINT(hicpp-move-const-arg,performance-move-const-arg)
+                HANDLE temp = std::move(raw_handle_);
                 raw_handle_ = nullptr;
-                return std::move(temp); // NOLINT(hicpp-move-const-arg,performance-move-const-arg)
+                return std::move(temp);
             }
 
             /// Synchronously write data to file or I/O device associated with this handle
@@ -110,14 +112,16 @@ namespace laio {
             /// Return value:
             ///     Result<std::size_t>
             ///
-            /// Writes from a provided output buffer this file handle. The buffer is borrowed as a non-owning view into
-            /// the buffer. The write operation is performed sequentially. The buffer is required to provide an unsigned
-            /// integer bytestream. Returns the number of bytes that were successfully written to the file.
+            /// Writes from a provided output buffer to this file handle in blocking mode. The buffer is borrowed as a
+            /// non-owning view into the buffer. The write operation is performed sequentially. The buffer is required
+            /// to provide an unsigned integer bytestream. Returns the number of bytes that were successfully written
+            /// to the file.
             Result<std::size_t> write(gsl::span<const uint8_t> buf) noexcept {
                 DWORD bytes = 0;
 
                 // For unsigned char `buf.size_bytes() == buf.size()`
-                const DWORD len = (std::min)(static_cast<DWORD>(buf.size_bytes()), static_cast<DWORD>((std::numeric_limits<std::size_t>::max)()));
+                const DWORD len = (std::min)(static_cast<DWORD>(buf.size_bytes()),
+                        static_cast<DWORD>((std::numeric_limits<std::size_t>::max)()));
                 const BOOL res = WriteFile(
                         raw_handle_,
                         buf.data(),
@@ -147,7 +151,8 @@ namespace laio {
                 DWORD bytes = 0;
 
                 // For unsigned char `buf.size_bytes() == buf.size()`
-                const DWORD len = (std::min)(static_cast<DWORD>(buf.size_bytes()), static_cast<DWORD>((std::numeric_limits<std::size_t>::max)()));
+                const DWORD len = (std::min)(static_cast<DWORD>(buf.size_bytes()),
+                        static_cast<DWORD>((std::numeric_limits<std::size_t>::max)()));
                 const BOOL res = ReadFile(
                         raw_handle_,
                         buf.data(),
@@ -194,7 +199,8 @@ namespace laio {
             Result<std::size_t> read_overlapped_wait(gsl::span<uint8_t> buf, OVERLAPPED *overlapped) noexcept {
                 const Result<std::optional<std::size_t>> res = read_overlapped_helper_(buf, overlapped, TRUE);
 
-                // Does not throw if it accesses a `std::nullopt`, but due to `wait == TRUE`, that would constitute a logic error.
+                // Does not throw if it accesses a `std::nullopt`, but due to `wait == TRUE`, that would constitute a
+                // logic error.
                 return std::visit(Overload{
                         [](const std::optional<std::size_t> &arg) -> Result<std::size_t> { return *arg; },
                         [](const wse::win_error &arg) -> Result<std::size_t> { return arg; },
@@ -234,7 +240,8 @@ namespace laio {
             Result<std::size_t> write_overlapped_wait(gsl::span<const uint8_t> buf, OVERLAPPED *overlapped) noexcept {
                 const Result<std::optional<std::size_t>> res = write_overlapped_helper_(buf, overlapped, TRUE);
 
-                // Does not throw if it accesses a `std::nullopt`, but due to `wait == TRUE`, that would constitute a logic error.
+                // Does not throw if it accesses a `std::nullopt`, but due to `wait == TRUE`, that would constitute a
+                // logic error.
                 return std::visit(Overload{
                         [](const std::optional<std::size_t> &arg) -> Result<std::size_t> { return *arg; },
                         [](const wse::win_error &arg) -> Result<std::size_t> { return arg; },
@@ -259,7 +266,8 @@ namespace laio {
                                                                        BOOLEAN wait) noexcept {
 
                 // For unsigned char `buf.size_bytes() == buf.size()`
-                const DWORD len = (std::min)(static_cast<DWORD>(buf.size_bytes()), static_cast<DWORD>((std::numeric_limits<std::size_t>::max)()));
+                const DWORD len = (std::min)(static_cast<DWORD>(buf.size_bytes()),
+                        static_cast<DWORD>((std::numeric_limits<std::size_t>::max)()));
                 BOOL res = ReadFile(
                         raw_handle_,
                         buf.data(),
@@ -310,7 +318,8 @@ namespace laio {
                                                                         OVERLAPPED *overlapped, BOOLEAN wait) noexcept {
 
                 // For unsigned char `buf.size_bytes() == buf.size()`
-                const DWORD len = (std::min)(static_cast<DWORD>(buf.size_bytes()), static_cast<DWORD>((std::numeric_limits<std::size_t>::max)()));
+                const DWORD len = (std::min)(static_cast<DWORD>(buf.size_bytes()),
+                        static_cast<DWORD>((std::numeric_limits<std::size_t>::max)()));
                 BOOL res = WriteFile(
                         raw_handle_,
                         buf.data(),
