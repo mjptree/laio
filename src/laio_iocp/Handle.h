@@ -1,4 +1,6 @@
 #pragma clang diagnostic push
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "google-explicit-constructor"
 #pragma ide diagnostic ignored "hicpp-move-const-arg"
 #pragma once
 
@@ -28,18 +30,12 @@ namespace laio {
 
         /// Generic handle to Windows system resources
         ///
-        /// Member attributes:
-        ///     HANDLE  : raw_handle_
-        ///
-        /// Traits:
-        ///     is_send,
-        ///     is_sync
-        ///
-        /// Wraps a raw Windows handle, which in general is an aliased pointer. This class provides generic read-write-
-        /// functionality and enforces ownership semantics. It behaves in the widest sense similar to `std::unique_ptr`.
+        /// \details Wraps a raw Windows handle, which in general is an aliased pointer. This class provides generic
+        /// read-write-functionality and enforces ownership semantics. It behaves in the widest sense similar to
+        /// `std::unique_ptr`.
         class Handle {
 
-            HANDLE raw_handle_;
+            HANDLE raw_handle_{};     ///< Raw Windows I/O handle
 
         public:
             // # Constructors
@@ -70,34 +66,19 @@ namespace laio {
                 return *this;
             }
 
-            // # Public Member functions
-
-            /// Borrow raw windows I/O handle object
-            ///
-            /// Parameters:
-            ///     (none)
-            ///
-            /// Return value:
-            ///     HANDLE&
-            ///
-            /// Returns a reference to its inner raw HANDLE, thus enables ownership through borrow-semantics. Logically,
-            /// the lifetime of the reference is tied to the lifetime of the owner.
-            /// Do not clean-up the HANDLE through the reference!
-            HANDLE& raw() & noexcept {
+            operator HANDLE() noexcept {
                 return raw_handle_;
             }
 
+            // # Public Member functions
+
             /// Extract raw windows I/O handle object and consume wrapper
             ///
-            /// Parameters:
-            ///     (none)
-            ///
-            /// Return value:
-            ///     HANDLE&&
-            ///
-            /// Offers similar behaviour to move assignment. `into_raw` allows to move the raw HANDLE out of the
-            /// class. The wrapper is consumed in the process.
+            /// \details Offers similar behaviour to move assignment. `into_raw` allows to move the raw HANDLE out of
+            /// the class. The wrapper is consumed in the process.
             /// The new owner takes the responsibility to clean-up after itself!
+            ///
+            /// \return Raw handle
             HANDLE&& into_raw() && noexcept {
                 HANDLE temp = std::move(raw_handle_);
                 raw_handle_ = nullptr;
@@ -106,16 +87,13 @@ namespace laio {
 
             /// Synchronously write data to file or I/O device associated with this handle
             ///
-            /// Parameters:
-            ///     gsl::span<const std::uint8_t>   : buf
+            /// \details Writes from a provided output buffer to this file handle in blocking mode. The buffer is
+            /// borrowed as a non-owning view into the buffer. The write operation is performed sequentially. The buffer
+            /// is required to provide an unsigned integer bytestream. Returns the number of bytes that were
+            /// successfully written to the file.
             ///
-            /// Return value:
-            ///     Result<std::size_t>
-            ///
-            /// Writes from a provided output buffer to this file handle in blocking mode. The buffer is borrowed as a
-            /// non-owning view into the buffer. The write operation is performed sequentially. The buffer is required
-            /// to provide an unsigned integer bytestream. Returns the number of bytes that were successfully written
-            /// to the file.
+            /// \param buf Buffer of raw bytes to write to this I/O device
+            /// \return Variant with number of bytes successfully written, error type otherwise
             Result<std::size_t> write(gsl::span<const uint8_t> buf) noexcept {
                 DWORD bytes = 0;
 
@@ -138,15 +116,13 @@ namespace laio {
 
             /// Synchronously read data from file or I/O device associated with this handle
             ///
-            /// Parameters:
-            ///     gsl::span<std::uint8_t> : buf
+            /// \details Reads from this file handle to a provided input buffer in blocking mode. The buffer is borrowed
+            /// as a non-owning view into the buffer. The read operation is performed sequentially. The buffer is filled
+            /// with an unsigned integer bytestream. Returns the number of bytes that were successfully read from the
+            /// file.
             ///
-            /// Return value:
-            ///     Result<std::size_t>
-            ///
-            /// Reads from this file handle to a provided input buffer in blocking mode. The buffer is borrowed as a
-            /// non-owning view into the buffer. The read operation is performed sequentially. The buffer is filled with
-            /// an unsigned integer bytestream. Returns the number of bytes that were successfully read from the file.
+            /// \param buf Buffer for raw bytes to read form this I/O device
+            /// \return Variant with number of bytes successfully read, error type otherwise
             Result<std::size_t> read(gsl::span<uint8_t> buf) noexcept {
                 DWORD bytes = 0;
 
@@ -169,16 +145,13 @@ namespace laio {
 
             /// Asynchronously read data from file or I/O device and return immediately
             ///
-            /// Parameters:
-            ///     gsl::span<std::uint8_t> : buf,
-            ///     OVERLAPPED*             : overlapped
-            ///
-            /// Return value:
-            ///     Result<std::optional<std::size_t>>
-            ///
-            /// Submits a request to perform an overlapped read. The buffer is borrowed as a non-owning view into the
-            /// buffer. The function returns immediately with the number of bytes that have already been read
+            /// \details Submits a request to perform an overlapped read. The buffer is borrowed as a non-owning view
+            /// into the buffer. The function returns immediately with the number of bytes that have already been read
             /// successfully by that time, if any.
+            ///
+            /// \param buf Buffer for raw bytes to read form this I/O device
+            /// \param overlapped Raw overlapped structure to specify asynchronous read
+            /// \return Variant with optional number of bytes successfully read if any, error type otherwise
             Result<std::optional<std::size_t>> read_overlapped(gsl::span<uint8_t> buf,
                                                                OVERLAPPED* overlapped) noexcept {
                 return read_overlapped_helper_(buf, overlapped, FALSE);
@@ -186,16 +159,14 @@ namespace laio {
 
             /// Asynchronously read data from file or I/O device and wait for completion
             ///
-            /// Parameters:
-            ///     gsl::span<std::uint8_t> : buf,
-            ///     OVERLAPPED*             : overlapped
+            /// \details Submits a request to perform an overlapped read. The buffer is borrowed as a non-owning view
+            /// into the buffer. Despite performing the read in non-blocking mode, the function will wait for the read
+            /// operation to complete and then returns with the number of bytes that have successfully been read from
+            /// this file.
             ///
-            /// Return value:
-            ///     Result<std::size_t>
-            ///
-            /// Submits a request to perform an overlapped read. The buffer is borrowed as a non-owning view into the
-            /// buffer. Despite performing the read in non-blocking mode, the function will wait for the read operation
-            /// to complete and then returns with the number of bytes that have successfully been read from this file.
+            /// \param buf Buffer for raw bytes to read form this I/O device
+            /// \param overlapped Raw overlapped structure to specify asynchronous read
+            /// \return Variant with number of bytes successfully read, error type otherwise
             Result<std::size_t> read_overlapped_wait(gsl::span<uint8_t> buf, OVERLAPPED *overlapped) noexcept {
                 const Result<std::optional<std::size_t>> res = read_overlapped_helper_(buf, overlapped, TRUE);
 
@@ -209,16 +180,13 @@ namespace laio {
 
             /// Asynchronously write data to file or I/O device and return immediately
             ///
-            /// Parameters:
-            ///     gsl::span<const std::uint8_t>   : buf,
-            ///     OVERLAPPED*                     : overlapped
+            /// \details Submits a request to perform an overlapped write. The buffer is borrowed as a non-owning view
+            /// into the buffer. The function returns immediately with the number of bytes that have already been
+            /// written successfully by that time, if any.
             ///
-            /// Return value:
-            ///     Result<std::optional<std::size_t>>
-            ///
-            /// Submits a request to perform an overlapped write. The buffer is borrowed as a non-owning view into the
-            /// buffer. The function returns immediately with the number of bytes that have already been written
-            /// successfully by that time, if any.
+            /// \param buf Buffer of raw bytes to write to this I/O device
+            /// \param overlapped Raw overlapped structure to specify asynchronous write
+            /// \return Variant with optional number of bytes successfully written if any, error type otherwise
             Result<std::optional<std::size_t>> write_overlapped(gsl::span<const uint8_t> buf,
                                                                 OVERLAPPED *overlapped) noexcept {
                 return write_overlapped_helper_(buf, overlapped, FALSE);
@@ -226,17 +194,14 @@ namespace laio {
 
             /// Asynchronously write data to file or I/O device and wait for completion
             ///
-            /// Parameters:
-            ///     gsl::span<const std::uint8_t>   : buf,
-            ///     OVERLAPPED*                     : overlapped
-            ///
-            /// Return value:
-            ///     Result<std::size_t>
-            ///
-            /// Submits a request to perform an overlapped write. The buffer is borrowed as a non-owning view into the
-            /// buffer. Despite performing the write in non-blocking mode, the function will wait for the write
+            /// \details Submits a request to perform an overlapped write. The buffer is borrowed as a non-owning view
+            /// into the buffer. Despite performing the write in non-blocking mode, the function will wait for the write
             /// operation to complete and then returns with the number of bytes that have successfully been written to
             /// this file.
+            ///
+            /// \param buf Buffer of raw bytes to write to this I/O device
+            /// \param overlapped Raw overlapped structure to specify asynchronous write
+            /// \return Variant with number of bytes successfully written, error type otherwise
             Result<std::size_t> write_overlapped_wait(gsl::span<const uint8_t> buf, OVERLAPPED *overlapped) noexcept {
                 const Result<std::optional<std::size_t>> res = write_overlapped_helper_(buf, overlapped, TRUE);
 
@@ -251,17 +216,14 @@ namespace laio {
         private:
             /// Asynchronously read data from file or I/O device associated with this handle
             ///
-            /// Parameters:
-            ///     gsl::span<std::uint8_t> : buf,
-            ///     OVERLAPPED*             : overlapped,
-            ///     BOOLEAN                 : wait
+            /// \details Internally handles overlapped reads from this file handle. The method allows to specify whether
+            /// to wait for the completion of the read operation or to return immediately. Returns the number of
+            /// successfully read bytes by the time it returns, if any.
             ///
-            /// Return value:
-            ///     Result<std::optional<std::size_t>>
-            ///
-            /// Internally handles overlapped reads from this file handle. The method allows to specify whether to wait
-            /// for the completion of the read operation or to return immediately. Returns the number of successfully
-            /// read bytes by the time it returns, if any.
+            /// \param buf Buffer for raw bytes to read form this I/O device
+            /// \param overlapped Raw overlapped structure to specify asynchronous read
+            /// \param wait Block thread if `true`
+            /// \return Variant with optional number of bytes successfully read if any, error type otherwise
             Result<std::optional<std::size_t>> read_overlapped_helper_(gsl::span<uint8_t> buf, OVERLAPPED *overlapped,
                                                                        BOOLEAN wait) noexcept {
 
@@ -303,17 +265,14 @@ namespace laio {
 
             /// Asynchronously write data to file or I/O device associated with this handle
             ///
-            /// Parameters:
-            ///     gsl::span<const std::uint8_t>   : buf,
-            ///     OVERLAPPED*                     : overlapped,
-            ///     BOOLEAN                         : wait
+            /// \details Internally handles overlapped writes to this file handle. The method allows to specify whether
+            /// to wait for the completion of the write operation or to return immediately. Returns the number of
+            /// successfully written bytes by the time it returns, if any.
             ///
-            /// Return value:
-            ///     Result<std::optional<std::size_t>>
-            ///
-            /// Internally handles overlapped writes to this file handle. The method allows to specify whether to wait
-            /// for the completion of the write operation or to return immediately. Returns the number of successfully
-            //  written bytes by the time it returns, if any.
+            /// \param buf Buffer of raw bytes to write to this I/O device
+            /// \param overlapped Raw overlapped structure to specify asynchronous write
+            /// \param wait Block thread if `true`
+            /// \return Variant with optional number of bytes successfully written if any, error type otherwise
             Result<std::optional<std::size_t>> write_overlapped_helper_(gsl::span<const uint8_t> buf,
                                                                         OVERLAPPED *overlapped, BOOLEAN wait) noexcept {
 
@@ -351,3 +310,4 @@ namespace laio {
     } // namespace iocp
 
 } // namespace laio
+#pragma clang diagnostic pop

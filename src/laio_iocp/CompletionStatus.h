@@ -11,18 +11,11 @@ namespace laio {
 
         /// Status message received from I/O Completion Port
         ///
-        /// Member attributes:
-        ///     OVERLAPPED_ENTRY    : raw_overlapped_entry_
-        ///
-        /// Traits:
-        ///     is_send,
-        ///     is_sync
-        ///
-        /// Wraps a Windows `OVERLAPPED_ENTRY` structure. Usually read out of I/O Completion Ports, they can also be
-        /// zero-initialized or custom created and posted to a completion port manually.
+        /// \details Wraps a Windows `OVERLAPPED_ENTRY` structure. Usually read out of I/O completion ports, they can
+        /// also be zero-initialized or custom created and posted to a completion port manually.
         class CompletionStatus {
 
-            OVERLAPPED_ENTRY raw_overlapped_entry_{};
+            OVERLAPPED_ENTRY raw_overlapped_entry_{};   ///< Raw Windows overlapped entry
 
         public:
             // # Constructors
@@ -39,20 +32,17 @@ namespace laio {
 
             /// Create new custom completion status
             ///
-            /// Parameters:
-            ///     const std::uint32_t : bytes,
-            ///     std::size_t         : token,
-            ///     Overlapped*         : overlapped
-            ///
-            /// Return value:
-            ///     CompletionStatus
-            ///
-            /// A new Completion status must be provided with the number of bytes, that have been transferred in the
-            /// I/O operation associated with this status message, the unique token to the file handle involved in the
-            /// operation and a pointer to the corresponding overlapped structure.
+            /// \details A new Completion status must be provided with the number of bytes, that have been transferred
+            /// in the I/O operation associated with this status message, the unique token to the file handle involved
+            /// in the operation and a pointer to the corresponding overlapped structure.
             /// The integer arguments are upcasted from `int` to `long` if necessary, although this should generally
             /// not result in a widening of the type (or a narrowing when reading the value from the status) on
             /// Windows platforms.
+            ///
+            /// \param bytes Number of bytes that were successfully transferred
+            /// \param token Unique token to this I/O operation
+            /// \param overlapped Pointer to associated overlapped structure
+            /// \return CompletionStatus
             static CompletionStatus create(const uint32_t bytes, std::size_t token, Overlapped* overlapped) noexcept {
                 return CompletionStatus{OVERLAPPED_ENTRY{
                         static_cast<ULONG_PTR>(token),
@@ -64,53 +54,35 @@ namespace laio {
 
             /// Return the number of bytes transferred in the I/O operation associated with this completion status
             ///
-            /// Parameters:
-            ///     (none)
-            ///
-            /// Return value:
-            ///     std::uint32_t
-            ///
-            /// The message contained in this status is the number of bytes that have been transferred in the I/O
-            /// operation and is internally stored as a `long`, which is not guaranteed to match `std::uint32_t`,
+            /// \details The message contained in this status is the number of bytes that have been transferred in the
+            /// I/O operation and is internally stored as a `long`, which is not guaranteed to match `std::uint32_t`,
             /// although on Windows that is generally the case.
+            ///
+            /// \return Number of bytes successfully transferred
             uint32_t bytes_transferred() noexcept {
                 return static_cast<uint32_t>(raw_overlapped_entry_.dwNumberOfBytesTransferred);
             }
 
             /// Return token associated with the file handle whose I/O operation has completed
             ///
-            /// Parameters:
-            ///     (none)
-            ///
-            /// Return value:
-            ///     std::size_t
-            ///
-            /// The token must uniquely identify the I/O handle that has been registered with a Completion Port and to
+            /// \details The token must uniquely identify the I/O handle that has been registered with a Completion Port and to
             /// which this status message belongs.
+            ///
+            /// \return Unique token associated with this I/O operation
             std::size_t token() noexcept {
                 return static_cast<std::size_t>(raw_overlapped_entry_.lpCompletionKey);
             }
 
             /// Return pointer to the `OVERLAPPED` structure associated with the I/O operation to this completion status
             ///
-            /// Parameters:
-            ///     (none)
-            ///
-            /// Return value:
-            ///     OVERLAPPED*
-            ///
+            /// \return Pointer to raw associated Windows overlapped structure
             OVERLAPPED* overlapped() noexcept {
                 return raw_overlapped_entry_.lpOverlapped;
             }
 
             /// Return pointer to internal `OVERLAPPED_ENTRY` structure
             ///
-            /// Parameters:
-            ///     (none)
-            ///
-            /// Return value:
-            ///     OVERLAPPED_ENTRY*
-            ///
+            /// \return Pointer raw inner Windows overlapped entry structure
             OVERLAPPED_ENTRY* entry() noexcept {
                 return &raw_overlapped_entry_;
             }
