@@ -6,6 +6,7 @@ doc/
 CMakeFiles/
 CMakeScripts/
 cmake-build-debug/
+cmake-build*/
 build/
 .vs/
 .idea/

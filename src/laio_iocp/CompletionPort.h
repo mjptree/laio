@@ -27,7 +27,7 @@ namespace laio {
         /// completion port specific operations and enforce ownership semantics.
         class CompletionPort {
 
-            Handle handle_{};    ///< Handle to CompletionPort
+            Handle handle_;    ///< Handle to CompletionPort
 
         public:
             // # Constructors

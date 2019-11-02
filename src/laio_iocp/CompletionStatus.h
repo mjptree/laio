@@ -24,6 +24,7 @@ namespace laio {
             explicit CompletionStatus(OVERLAPPED_ENTRY overlappedEntry) noexcept
                     : raw_overlapped_entry_{std::move(overlappedEntry)} {} // NOLINT(hicpp-move-const-arg,performance-move-const-arg)
 
+            // # Operator overloads
             constexpr operator OVERLAPPED_ENTRY() const noexcept { // NOLINT(google-explicit-constructor,hicpp-explicit-conversions)
                 return raw_overlapped_entry_;
             }
@@ -82,7 +83,7 @@ namespace laio {
 
             /// Return pointer to internal `OVERLAPPED_ENTRY` structure
             ///
-            /// \return Pointer raw inner Windows overlapped entry structure
+            /// \return Pointer to raw inner Windows overlapped entry structure.
             OVERLAPPED_ENTRY* entry() noexcept {
                 return &raw_overlapped_entry_;
             }
