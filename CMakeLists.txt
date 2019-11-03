@@ -9,10 +9,16 @@ if(NOT TARGET windows_system_error)
     add_subdirectory(dependencies/windows_system_error)
 endif()
 
-# Use GSL for acces to spans
-# TODO: To be replaced by STL span upon availability
+# Use GSL for access to spans
+# TODO: Replace by STL span upon availability
 if(NOT TARGET GSL)
     add_subdirectory(dependencies/GSL)
+endif()
+
+# Use fmt for access to format
+# TODO: Replace by STL format upon availability
+if(NOT TARGET fmt)
+    add_subdirectory(dependencies/fmt)
 endif()
 
 if(NOT TARGET Catch2)
@@ -43,6 +49,7 @@ target_link_libraries(laio
         INTERFACE
             windows_system_error
             GSL
+            fmt
             laio_iocp
             laio_net
         )
