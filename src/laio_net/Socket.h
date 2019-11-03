@@ -1,6 +1,6 @@
 #pragma once
 
-#include <WinSock2.h>
+#include <winsock2.h>
 
 #include <chrono>
 #include <mutex>
@@ -21,6 +21,7 @@ namespace laio {
         class Socket {
             SOCKET raw_socket_;
         public:
+            // # Constructors
             explicit constexpr Socket(SOCKET socket) noexcept
                 : raw_socket_{std::move(socket)} {} // NOLINT(hicpp-move-const-arg,performance-move-const-arg)
                 
@@ -29,6 +30,8 @@ namespace laio {
                 // TODO: Handle consumption of the object through call to `into_raw_socket`
                 closesocket(raw_socket_);
             }
+
+            // # Public member functions
 
             static void init() { // TODO: Consider changing return type to Result<std::monostate>
                 static std::once_flag onceFlag;
