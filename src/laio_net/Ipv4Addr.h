@@ -7,6 +7,7 @@
 #include <WinSock2.h>
 
 #include <cstdint>
+#include <limits>
 #include <optional>
 #include <string>
 #include <tuple>
@@ -17,9 +18,12 @@
 
 #include "IpAddr.h"
 #include "Ipv6Addr.h"
+#include "Parser.h"
 
 namespace laio {
 
+    using std::uint_fast8_t;
+    using std::uint_fast16_t;
     using std::uint8_t;
     using std::uint32_t;
 
@@ -33,7 +37,7 @@ namespace laio {
         /// \details IPv4 address as a 32-bit integer represented through four single bytes. This implementation assumes
         /// host system with little-endian byte order. The class contains a Windows `IN_ADDR` structure that abstracts
         /// the handling of endianness, but requires unsafely accessing inactive union variants.
-        class Ipv4Addr final : public interface::IpAddr<Ipv4Addr> {
+        class Ipv4Addr final : public interface::IpAddr<Ipv4Addr>  {
 
             IN_ADDR raw_ipv4_address_{};        ///< Windows IpV4 address structure (unsafe union access!)
 
@@ -44,12 +48,17 @@ namespace laio {
             constexpr Ipv4Addr(IN_ADDR ipv4Address) noexcept // NOLINT(google-explicit-constructor,hicpp-explicit-conversions)
                 : raw_ipv4_address_{std::move(ipv4Address)} {}
 
+            Ipv4Addr(const Ipv4Addr& other) noexcept = default;
+
+            Ipv4Addr(Ipv4Addr&& other) noexcept
+                    : raw_ipv4_address_{std::move(other.raw_ipv4_address_)}
+            {
+                other.raw_ipv4_address_.S_un.S_addr = 0;
+            }
+
+
             explicit constexpr Ipv4Addr(const uint8_t a, const uint8_t b, const uint8_t c, const uint8_t d) noexcept
                 : raw_ipv4_address_{ { {a, b, c, d} /* struct */ } /* union */ } {}
-
-            explicit Ipv4Addr(const std::string& ipv4Address) noexcept {
-
-            }
 
             // # Operator overloads
             constexpr operator IN_ADDR() const noexcept { // NOLINT(google-explicit-constructor,hicpp-explicit-conversions)
@@ -83,6 +92,39 @@ namespace laio {
             }
 
             // # Public member functions
+
+            /// Parse address from string
+            ///
+            /// \return IPv4 address structure
+            static std::optional<Ipv4Addr> from(const std::string& ipv4Address) {
+                uint_fast16_t buf[4] = {0};
+                uint_fast8_t pos = 0, octet = 0;
+                for (auto i = ipv4Address.begin(); i < ipv4Address.end(); ++i) {
+
+                    // Each octet is representable with max 3 digits
+                    if (*i >= '0' && *i <= '9' && pos < 3 && octet < 4) {
+                        buf[octet] = buf[octet] * 10 + (*i - '0');
+
+                        // The maximum valid value an octet can hold is 255
+                        if (buf[octet] > (std::numeric_limits<uint8_t>::max)()) return std::nullopt;
+                        ++pos;
+                    }
+
+                    // There should be precisely 3 periods in the address, each maximum 3 digits apart
+                    else if (*i == '.' && pos > 0 && pos < 4 && octet < 3) {
+                        pos = 0;
+                        ++octet;
+                    } else {
+                        return std::nullopt;
+                    }
+                }
+                return Ipv4Addr{
+                    static_cast<uint8_t>(buf[0]),
+                    static_cast<uint8_t>(buf[1]),
+                    static_cast<uint8_t>(buf[2]),
+                    static_cast<uint8_t>(buf[3])
+                };
+            }
 
             /// Extract address in four 8-bit integer format
             ///

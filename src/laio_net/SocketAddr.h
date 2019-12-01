@@ -1,5 +1,7 @@
 #pragma once
 
+#include <variant>
+
 #include "win_error.h"
 
 #include "SocketAddrV4.h"
@@ -12,12 +14,15 @@
 
 namespace laio {
 
+    template<typename T>
+    using Result = std::variant<T, wse::win_error>;
+
     namespace net::interface {
 
         /// Socket address interface, implemented either for IpV4 or IpV6 address types
         ///
         ///
-        template<typename derived>
+        template<typename Derived>
         struct SocketAddr {
 
         };

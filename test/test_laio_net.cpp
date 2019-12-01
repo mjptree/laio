@@ -243,7 +243,26 @@ TEST_CASE("Ipv6Addr") {
     CHECK(Ipv6Addr{0, 0, 0, 0, 0, 0, 0, 1}.to_ipv4() == Ipv4Addr{0, 0, 0, 1});
 }
 
-TEST_CASE("Ipv6Addr to string conversion") {
+TEST_CASE("Ipv4Addr string conversion") {
+    using namespace laio::net;
+
+    Ipv4Addr localhost = *Ipv4Addr::from("127.0.0.1");
+    CHECK(localhost == ipv4::LOCALHOST);
+
+    std::optional<Ipv4Addr> unspecified = Ipv4Addr::from("0.0.0.0");
+    CHECK(unspecified == ipv4::UNSPECIFIED);
+
+    Ipv4Addr broadcast = *Ipv4Addr::from("255.255.255.255");
+    CHECK(broadcast == ipv4::BROADCAST);
+
+    std::optional<Ipv4Addr> three_periods = Ipv4Addr::from("...");
+    CHECK(three_periods == std::nullopt);
+
+    std::optional<Ipv4Addr> letters = Ipv4Addr::from("...");
+    CHECK(three_periods == std::nullopt);
+}
+
+TEST_CASE("Ipv6Addr string conversion") {
     using namespace laio::net;
 
     // IPv4-mapped address

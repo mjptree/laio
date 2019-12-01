@@ -3,7 +3,7 @@
 #pragma ide diagnostic ignored "hicpp-move-const-arg"
 #pragma once
 
-#include <ws2tcpip.h>
+#include <WS2tcpip.h>
 
 #include <cstdint>
 #include <optional>
@@ -16,6 +16,7 @@
 #include "win_error.h"
 
 #include "IpAddr.h"
+#include "Parser.h"
 
 namespace laio {
 
@@ -73,10 +74,6 @@ namespace laio {
                                      static_cast<uint8_t>(f >> 8u), static_cast<uint8_t>(f),
                                      static_cast<uint8_t>(g >> 8u), static_cast<uint8_t>(g),
                                      static_cast<uint8_t>(h >> 8u), static_cast<uint8_t>(h)} /* union */ } {}
-
-            explicit Ipv6Addr(const std::string& ipv6Address) noexcept {
-
-            }
 
             // # Operator overloads
             constexpr operator IN6_ADDR() const noexcept { // NOLINT(google-explicit-constructor,hicpp-explicit-conversions)
@@ -198,6 +195,32 @@ namespace laio {
             }
 
             // # Public member functions
+
+            /// Parse address from string
+            ///
+            /// \return IPv6 address structure
+            /*static std::optional<Ipv6Addr> from(const std::string& ipv6Address) {
+                uint_fast32_t buf[8] = {0};
+                uint_fast8_t pos = 0, octet = 0;
+                for (auto i = ipv4Address.begin(); i < ipv4Address.end(); ++i) {
+                    if (*i >= '0' && *i <= '9' && pos < 3 && octet < 4) {
+                        buf[octet] = buf[octet] * 10 + (*i - '0');
+                        if (buf[octet] > 255) return std::nullopt;
+                        ++pos;
+                    } else if (*i == '.' && pos < 4 && octet < 3) {
+                        pos = 0;
+                        ++octet;
+                    } else {
+                        return std::nullopt;
+                    }
+                }
+                return Ipv6Addr{
+                        static_cast<uint8_t>(buf[0]),
+                        static_cast<uint8_t>(buf[1]),
+                        static_cast<uint8_t>(buf[2]),
+                        static_cast<uint8_t>(buf[3])
+                };
+            }*/
 
             /// Extract address in eight 16-bit integer segments
             ///

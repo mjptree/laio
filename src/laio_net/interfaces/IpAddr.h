@@ -65,7 +65,7 @@ namespace laio {
                 return static_cast<Derived*>(this)->is_ipv6();
             }
 
-        };
+        }; // struct IpAddr
 
     } // namespace net::interface
 
