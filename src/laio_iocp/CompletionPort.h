@@ -232,7 +232,7 @@ namespace laio {
                 return std::monostate{};
             }
 
-        };
+        }; // class CompletionPort
 
     } // namespace iocp
 

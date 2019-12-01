@@ -305,7 +305,7 @@ namespace laio {
                 return static_cast<std::size_t>(bytes);
             }
 
-        };
+        }; // class Handle
 
     } // namespace iocp
 

@@ -109,7 +109,7 @@ namespace laio {
                 return raw_overlapped_.hEvent;
             }
 
-        };
+        }; // class Overlapped
 
     } // namespace iocp
 

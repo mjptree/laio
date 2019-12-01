@@ -88,7 +88,7 @@ namespace laio {
                 return &raw_overlapped_entry_;
             }
 
-        };
+        }; // class CompletionStatus
 
     } // namespace iocp
 
